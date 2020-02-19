@@ -1,2 +1,4 @@
-!text.py
-!.idea/
+# PyCharm项目配置文件
+.idea/
+# 自测代码
+test/
