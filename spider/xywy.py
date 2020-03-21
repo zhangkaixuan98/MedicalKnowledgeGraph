@@ -93,7 +93,7 @@ def analyze_disease_info(disease_id):
         disease_alias = disease_gs.select('.Disease-alias')
         if len(disease_alias) == 1:
             disease_alias = re.sub(r'别名：', '', disease_alias[0].text)
-            disease_alias = re.split('，', disease_alias)
+            disease_alias = re.split('，', disease_alias.strip('，'))
             disease_info["疾病别名"] = disease_alias
         # 疾病简介
         disease_brief = disease_gs.select('.Disease-brief')[0].select('p')
@@ -246,7 +246,7 @@ def write_disease_info(disease_info):
                 departments.append(department)
             for i in range(len(departments) - 1):
                 keshi = disease_info['挂什么科'][i]
-                department_department = r_matcher.match(departments[i:i + 1], 'dept_contain_dept').first()
+                department_department = r_matcher.match([departments[i], departments[i+1]], 'dept_contain_dept').first()
                 if department_department is None:
                     department_department = Relationship(departments[i], 'dept_contain_dept', departments[i + 1])
                     graph.create(department_department)
@@ -385,7 +385,7 @@ def get_drugs_id():
         parameter["cate_id"] = cate_id
         parameter["page"] = 1
         # 防止死循环
-        n = 50
+        n = 1
         while n:
             n -= 1
             # 请求参数dict格式转url格式
