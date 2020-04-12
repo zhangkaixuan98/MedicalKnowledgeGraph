@@ -2,3 +2,4 @@
 .idea/
 # 自测代码
 test/
+*.txt
