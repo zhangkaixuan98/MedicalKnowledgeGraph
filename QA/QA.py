@@ -4,7 +4,7 @@ import re
 
 class ChatRobot:
     def __init__(self):
-        self.classifier =
+        self.classifier = question.QuestionClassify()
 
 
 def main():

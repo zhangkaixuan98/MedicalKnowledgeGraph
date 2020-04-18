@@ -31,18 +31,18 @@ def write_disease_info(disease_info):
         #         kind = Node('kind', name=disease_info['疾病类型'])
         #     kind_disease = Relationship(kind, 'kind_disease', disease)
         #     graph.create(kind_disease)
-        # 疾病别名
-        if disease_info.get('疾病别名') is not None:
-            # disease['alias'] = disease_info['疾病别名']
-            # graph.push(disease)
-            for bieming in disease_info['疾病别名']:
-                alias = node_matcher.match("alias").where(f"_.name = '{bieming}'").first()
-                # 此别名节点还未创建
-                if alias is None:
-                    alias = Node('alias', name=bieming)
-                    graph.create(alias)
-                disease_alias = Relationship(disease, 'disease_alias', alias)
-                graph.create(disease_alias)
+        # # 疾病别名
+        # if disease_info.get('疾病别名') is not None:
+        #     # disease['alias'] = disease_info['疾病别名']
+        #     # graph.push(disease)
+        #     for bieming in disease_info['疾病别名']:
+        #         alias = node_matcher.match("alias").where(f"_.name = '{bieming}'").first()
+        #         # 此别名节点还未创建
+        #         if alias is None:
+        #             alias = Node('alias', name=bieming)
+        #             graph.create(alias)
+        #         disease_alias = Relationship(disease, 'disease_alias', alias)
+        #         graph.create(disease_alias)
         # # 疾病简介
         # if disease_info.get('疾病简介') is not None:
         #     disease['brief'] = disease_info['疾病简介']
@@ -62,17 +62,17 @@ def write_disease_info(disease_info):
         #         keshi = disease_info['挂什么科'][i]
         #         department_department = Relationship(departments[i], 'dept_contain_dept', departments[i + 1])
         #         graph.create(department_department)
-        # # 需做检查
+        # 需做检查
         # if disease_info.get('需做检查') is not None:
-        #     disease['check'] = disease_info['需做检查']
-        #     graph.push(disease)
-        #     # for jiancha in disease_info['需做检查']:
-        #     #     check = node_matcher.match("check").where(f"_.name = '{jiancha}'").first()
-        #     #     if check is None:
-        #     #         check = Node('check', name=jiancha)
-        #     #         graph.create(check)
-        #     #     disease_check = Relationship(disease, 'disease_check', check)
-        #     #     graph.create(disease_check)
+        #     # disease['check'] = disease_info['需做检查']
+        #     # graph.push(disease)
+        #     for jiancha in disease_info['需做检查']:
+        #         check = node_matcher.match("check").where(f"_.name = '{jiancha}'").first()
+        #         if check is None:
+        #             check = Node('check', name=jiancha)
+        #             graph.create(check)
+        #         disease_check = Relationship(disease, 'disease_check', check)
+        #         graph.create(disease_check)
         # # 治疗方法 disease_method
         # if disease_info.get('治疗方法') is not None:
         #     disease['method'] = disease_info['治疗方法']
@@ -190,14 +190,14 @@ def write_drug_info(drug_info):
             if drug is None:
                 drug = Node('drug', name=drug_info['通用名称'])
                 graph.create(drug)
-        # # 功能主治
-        # if drug_info.get('功能主治') is not None:
-        #     drug['function'] = drug_info['功能主治']
-        #     graph.push(drug)
-        # # 用法用量
-        # if drug_info.get('用法用量') is not None:
-        #     drug['usage'] = drug_info['用法用量']
-        #     graph.push(drug)
+        # 功能主治
+        if drug_info.get('功能主治') is not None:
+            drug['function'] = drug_info['功能主治']
+            graph.push(drug)
+        # 用法用量
+        if drug_info.get('用法用量') is not None:
+            drug['usage'] = drug_info['用法用量']
+            graph.push(drug)
         # 剂型
         if drug_info.get('剂型') is not None:
             # 去除剂型后的()内容 2020/4/10
@@ -219,22 +219,22 @@ def write_drug_info(drug_info):
                 form = Node('form', name=drug_info['剂型'])
             form_drug = Relationship(form, 'form_drug', drug)
             graph.create(form_drug)
-        # # 成份
-        # if drug_info.get('成份') is not None:
-        #     drug['component'] = drug_info['成份']
-        #     graph.push(drug)
-        # # 不良反应
-        # if drug_info.get('不良反应') is not None:
-        #     drug['effects'] = drug_info['不良反应']
-        #     graph.push(drug)
-        # # 禁忌
-        # if drug_info.get('禁忌') is not None:
-        #     drug['avoid'] = drug_info['禁忌']
-        #     graph.push(drug)
-        # # 注意事项
-        # if drug_info.get('注意事项') is not None:
-        #     drug['matters'] = drug_info['注意事项']
-        #     graph.push(drug)
+        # 成份
+        if drug_info.get('成份') is not None:
+            drug['component'] = drug_info['成份']
+            graph.push(drug)
+        # 不良反应
+        if drug_info.get('不良反应') is not None:
+            drug['effects'] = drug_info['不良反应']
+            graph.push(drug)
+        # 禁忌
+        if drug_info.get('禁忌') is not None:
+            drug['avoid'] = drug_info['禁忌']
+            graph.push(drug)
+        # 注意事项
+        if drug_info.get('注意事项') is not None:
+            drug['matters'] = drug_info['注意事项']
+            graph.push(drug)
         return True
     except Exception as e:
         with open('error.txt', 'a', encoding='utf-8') as f:
@@ -257,11 +257,12 @@ def write_symptom_info(symptom_info):
                 graph.create(symptom)
         # 概述
         if symptom_info.get('概述') is not None:
+            print(symptom_info['概述'])
             symptom['brief'] = symptom_info['概述']
             graph.push(symptom)
         # 病因
         if symptom_info.get('病因') is not None:
-            symptom['cause'] = symptom_info['概述']
+            symptom['cause'] = symptom_info['病因']
             graph.push(symptom)
         # 检查
         if symptom_info.get('检查') is not None:
@@ -306,4 +307,5 @@ if __name__ == '__main__':
     #     write_drug_info(json.loads(line))
     # for line in open('info_symptoms.json', 'r'):
     #     write_symptom_info(json.loads(line))
-
+    # data = \
+    #     write_disease_info(data)

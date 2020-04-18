@@ -189,25 +189,25 @@ def analyze_symptom_info(symptom_id):
 
 # 简版，偷懒版：直接从 id0-id最大值 循环
 if __name__ == '__main__':
-    files = ['info_diseases.json', 'info_drugs.json', 'info_symptoms.json']
-    for file in files:
-        if os.path.exists(file):
-            os.remove(file)
-    for i in range(1000, 10000):
-        print(i)
-        for j in range(3):
-            try:
-                if j == 0:
-                    info = analyze_disease_info(i)
-                elif j == 1:
-                    info = analyze_drug_info(i)
-                else:
-                    info = analyze_symptom_info(i)
-                if info is not None:
-                    with open(f"{files[j]}", "a+") as f:
-                        f.write(json.dumps(info) + '\n')
-            except Exception as e:
-                with open('error.txt', 'a') as f:
-                    f.write(f'xywy_analyze_info_2:{j} id={i}\n')
-
+    # files = ['info_diseases.json', 'info_drugs.json', 'info_symptoms.json']
+    # for file in files:
+    #     if os.path.exists(file):
+    #         os.remove(file)
+    # for i in range(1000, 10000):
+    #     print(i)
+    #     for j in range(3):
+    #         try:
+    #             if j == 0:
+    #                 info = analyze_disease_info(i)
+    #             elif j == 1:
+    #                 info = analyze_drug_info(i)
+    #             else:
+    #                 info = analyze_symptom_info(i)
+    #             if info is not None:
+    #                 with open(f"{files[j]}", "a+") as f:
+    #                     f.write(json.dumps(info) + '\n')
+    #         except Exception as e:
+    #             with open('error.txt', 'a') as f:
+    #                 f.write(f'xywy_analyze_info_2:{j} id={i}\n')
+    print(analyze_disease_info(169))
 

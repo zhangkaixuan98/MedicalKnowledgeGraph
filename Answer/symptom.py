@@ -69,7 +69,7 @@ class Symptom:
     def cause(self):
         cql = f"match(n:symptom) where n.name='{self.name}' return n.cause as cause"
         data = self.graph.run(cql).data()[0]['cause']
-        print("cause", data)
+        # print("cause", data)
         return data
 
     def check(self):

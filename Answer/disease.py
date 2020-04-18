@@ -116,13 +116,12 @@ class Disease:
     def kind(self):
         """
         查询疾病的类型
-        :return: 类型字符串
+        :return: 类型列表
         """
         cql = f"match(n:kind)-[]->(p:disease) where p.name='{self.name}' return n.name as kind"
         data = []
         for kind in self.graph.run(cql).data():
             data.append(kind['kind'])
-        data = ' '.join(data)
         # print(data)
         return data
 
@@ -230,7 +229,6 @@ class Disease:
         """
         cql = f"match(n:disease) where n.name='{self.name}' return n.infect as infect"
         data = self.graph.run(cql).data()[0]['infect']
-        data = ' '.join(data)
         # print(data)
         return data
 
@@ -279,7 +277,7 @@ class Disease:
 
 if __name__ == '__main__':
     handler = Disease()
-    handler.search("", "癌症")
+    handler.search("", "失眠")
     # # 关系
     # handler.alias()
     # handler.kind()

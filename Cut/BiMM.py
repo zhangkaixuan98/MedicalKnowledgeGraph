@@ -105,11 +105,11 @@ def init():
     attr_drug.extend(['药', '药物', '药品', '', '', '', '', '', '', ''])
     attr_form.extend(['剂型', '类型', '', '', '', '', '', '', '', ''])
     attr_function.extend(['作用', '功能主治', '', '', '', '', '', '', '', ''])
-    attr_usage.extend(['用法用量', '', '', '', '', '', '', '', '', ''])
+    attr_usage.extend(['用法用量', '服用', '使用', '', '', '', '', '', '', ''])
     attr_component.extend(['成份', '', '', '', ''])
     attr_effects.extend(['不良反应', '', '', '', '', '', '', '', '', ''])
     attr_avoid.extend(['禁忌', '', '', '', '', '', '', '', '', ''])
-    attr_matters.extend(['注意事项', '', '', '', '', '', '', '', '', ''])
+    attr_matters.extend(['注意事项', '注意', '', '', '', '', '', '', '', ''])
     # 词典中最长的词的长度
     max_length = max(max(len(word) for word in dict_dis_sym),
                      max(len(word) for word in dict_ali_sym),
@@ -361,14 +361,11 @@ def test():
         # print(f.readline())
         query = re.split('\n', f.read().rstrip('\n'))
     for query in query:
+        print(query)
         words = cut_words(query)
         print(words)
 
 
 if __name__ == "__main__":
     # main()
-    # test()
-
-    cur_dir = os.path.abspath(__file__)
-    print(cur_dir)
-    print(os.path.dirname(__file__))
+    test()
