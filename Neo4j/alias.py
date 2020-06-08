@@ -9,15 +9,16 @@ class Alias:
         self.rel_matcher = RelationshipMatcher(self.graph)
         self.search_type = ""
         self.name = ""
+        self.disease = disease.Disease()
 
     def search(self, search_type, alias_name):
         self.search_type = search_type
         self.name = alias_name
-        disease_name = self.disease()
-        return disease.Disease.search(search_type, disease_name)
+        disease_name = self.disease_name()
+        return self.disease.search(self.search_type, disease_name)
 
     # 关系
-    def disease(self):
+    def disease_name(self):
         """
         查询别名所对应的疾病
         :return: 疾病
@@ -29,27 +30,7 @@ class Alias:
         return data
 
 
-
 if __name__ == '__main__':
-    handler = Disease()
-    handler.search("", "失眠")
-    # # 关系
-    # handler.alias()
-    # handler.kind()
-    # handler.department()
-    # handler.disease()
-    # handler.symptom()
-    # handler.drug()
-    # # 属性
-    # handler.brief()
-    # handler.check()
-    # handler.method()
-    # handler.fee()
-    # handler.infect()
-    # handler.cure_period()
-    # handler.cure_rate()
-    # handler.proportion()
-    # handler.population()
+    handler = Alias()
+    handler.search("cause", "头疼")
 
-    handler.disease_info()
-    handler.disease_info_brief()

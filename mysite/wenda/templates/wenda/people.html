@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+ <head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入 Bootstrap -->
+    {% load static %}
+    <link href="{% static 'wenda/css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'wenda/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'wenda/js/bootstrap.min.js' %}"></script>
+    <style media="screen">
+      .row {
+         margin-right: 0px;
+         margin-left: 0px;
+      }
+      .my-big-box{
+         margin: 10px 0px 10px 0px;
+      }
+      .my-bar-box{
+         background: white;
+         margin: 5px 0px 5px 0px;
+         padding: 7px 15px 0px 15px;
+         font-size:15px;
+      }
+      .my-small-box{
+         background: white;
+         margin: 5px 0px 5px 0px;
+         padding: 15px;
+      }
+      .people{
+         background:white;
+         height:50px;
+         padding:15px;
+      }
+      .selected{
+        border-bottom: 2px solid #bcbcbc;
+      }
+      .title{
+        color: #333;
+        height:20px;
+        margin:5px;
+        overflow:hidden;
+      }
+      .dept{
+        color: #ff9900;
+        margin-left: 5px;
+      }
+      .brief{
+        color: #999;
+        height:40px;
+        margin:5px;
+        overflow:hidden;
+      }
+      .reach-left{
+        color: #333;
+        margin-right: 5px;
+      }
+      .symptom{
+        color: #666;
+        height:20px;
+        margin:5px;
+        overflow:hidden
+      }
+      /* 滚动条框设置 */
+      *::-webkit-scrollbar {
+        width: 7px;
+        border-radius:3px;
+      }
+
+      /* 滚动条设置 */
+      *::-webkit-scrollbar-thumb {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+        background-color: #555;
+      }
+      .container>div{
+        margin-bottom: 10px;
+      }
+      .goTop {
+          height: 40px;
+          width: 40px;
+          background: #000000;
+          border-radius: 0px;
+          position: fixed;
+          top: 90%;
+          right: 3%;
+          display: none;
+          padding: 10px;
+          text-align: center;
+      }
+      .goTop span {
+          color: #fff;
+      }
+    </style>
+ </head>
+ <body style="background:#f5f5f5">
+   <div class="container col-xs-12 col-sm-8 col-sm-offset-2">
+     <!--头部开始-->
+     <header class="row" style="padding-bottom: 10px;background:#f5f5f5">
+       <nav class=""style="text-align:center; padding: 10px;">
+         <div class="col-xs-4 col-xs-offset-4" style="font-size: 20px;">
+           <a href="{% url 'wenda:index' %}" style="text-decoration:none;color:#333;">医疗问答</a>
+         </div>
+         <div class="col-xs-1 col-xs-offset-3">
+           <a href="{% url 'wenda:login'%}" style="text-decoration:none;color:#333;">
+             <img src="{% static 'wenda/images/user.png' %}" style="width:28px; height:28px;">
+          </a>
+        </div>
+       </nav>
+     </header>
+     <!--头部结束-->
+     <!--人群选择开始-->
+     <div class="row my-big_box list-unstyled list-inline people">
+         <li>全部</li>
+         <li>男性</li>
+         <li>女性</li>
+         <li>老年</li>
+         <li>儿童</li>
+     </div><!--人群选择结束-->
+      <!--人群查询结果开始-->
+      <div class="row my-big-box disease" id="disease">
+        <div class="row my-bar-box">
+          <p style="float:left" name="dept1-name"; id="dept1-name">{{data.population}}相关的疾病</p>
+        </div>
+        <!--disease.js-->
+      </div><!--人群查询结果结束-->
+
+      <div class="goTop">
+          <span class="glyphicon glyphicon-chevron-up"></span>
+      </div>
+      <!--footer开始-->
+      <footer class="row text-center" style="background:#333; height:50px; color:white;padding:20px">
+        <p>2020</p>
+      </footer>
+      <!--footer结束-->
+    </div>
+ </body>
+ <script type="text/javascript" src="{% static 'wenda/js/main.js' %}"></script>
+ <script type="text/javascript" src="{% static 'wenda/js/disease.js' %}"></script>
+ <script type="text/javascript" src="{% static 'wenda/js/people.js' %}"></script>
+ <script type="text/javascript">
+    var jsonDate = {{ data|safe }};
+    // console.log(jsonDate);
+    var population_name = jsonDate.population;
+    var page = 0;
+    var page_size = 5;
+    window.onload = function(){
+       setTimeout(function(){
+           $(window).scrollTop(0);
+           for(var i = 0, len = people_list.length; i < len; i++) {
+             if(people_list[i] == population_name) {
+                 people[i].className = 'selected';
+                 removeDiseasePeople();
+                 document.getElementById("people-name").innerHTML = people_list[i] + "相关的疾病";
+                 getDiseasePeople();
+             }
+           }
+       },10);
+    };
+    //滚动条到页面底部加载更多案例
+    $(window).scroll(function(){
+        var scrollTop = $(this).scrollTop();    //滚动条距离顶部的高度
+        var scrollHeight = $(document).height();   //当前页面的总高度
+        var clientHeight = $(this).height();    //当前可视的页面高度
+        if(scrollTop + clientHeight + 1>= scrollHeight){   //距离顶部+当前高度 >=文档总高度 即代表滑动到底部 count++;         //每次滑动count加1
+          getDiseasePeople();
+        }
+    });
+ </script>
+</html>

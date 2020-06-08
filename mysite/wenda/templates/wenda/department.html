@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+ <head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入 Bootstrap -->
+    {% load static %}
+    <link href="{% static 'wenda/css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'wenda/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'wenda/js/bootstrap.min.js' %}"></script>
+    <style media="screen">
+      .row {
+         margin-right: 0px;
+         margin-left: 0px;
+      }
+      .my-big-box{
+         margin: 10px 0px 10px 0px;
+      }
+      .my-bar-box{
+         background: white;
+         margin: 5px 0px 5px 0px;
+         padding: 7px 15px 0px 15px;
+         font-size:15px;
+      }
+      .my-small-box{
+         background: white;
+         margin: 5px 0px 5px 0px;
+         padding: 15px;
+      }
+      .title{
+        color: #333;
+        height:20px;
+        margin:5px;
+        overflow:hidden;
+      }
+      .dept{
+        color: #ff9900;
+        margin-left: 5px;
+      }
+      .brief{
+        color: #999;
+        height:40px;
+        margin:5px;
+        overflow:hidden;
+      }
+      .sym{
+        color: #333;
+        margin-right: 5px;
+      }
+      .symptom{
+        color: #666;
+        height:20px;
+        margin:5px;
+        overflow:hidden
+      }
+      /* 滚动条框设置 */
+      *::-webkit-scrollbar {
+        width: 7px;
+        border-radius:3px;
+      }
+
+      /* 滚动条设置 */
+      *::-webkit-scrollbar-thumb {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+        background-color: #555;
+      }
+      .container>div{
+        margin-bottom: 10px;
+      }
+      .goTop {
+          height: 40px;
+          width: 40px;
+          background: #000000;
+          border-radius: 0px;
+          position: fixed;
+          top: 90%;
+          right: 3%;
+          display: none;
+          padding: 10px;
+          text-align: center;
+      }
+      .goTop span {
+          color: #fff;
+      }
+    </style>
+ </head>
+ <body style="background:#f5f5f5">
+   <div class="container col-xs-12 col-sm-8 col-sm-offset-2">
+     <!--头部开始-->
+     <header class="row" style="padding-bottom: 10px;background:#f5f5f5">
+       <nav class=""style="text-align:center; padding: 10px;">
+         <div class="col-xs-4 col-xs-offset-4" style="font-size: 20px;">
+           <a href="{% url 'wenda:index' %}" style="text-decoration:none;color:#333;">医疗问答</a>
+         </div>
+         <div class="col-xs-1 col-xs-offset-3">
+           <a href="{% url 'wenda:login'%}" style="text-decoration:none;color:#333;">
+             <img src="{% static 'wenda/images/user.png' %}" style="width:28px; height:28px;">
+          </a>
+        </div>
+       </nav>
+     </header>
+     <!--头部结束-->
+     <!--下拉科室菜单开始-->
+     <div class="row center-block">
+       <div class="col-xs-6" style="margin:0;padding:0;">
+         <select name="dept_first" id="dept_first" class='dept_first form-control' msgEmpty="全部一级科室" style="height:50px;color:#666">
+           <option value="全部科室">全部一级科室</option>
+         </select>
+       </div>
+       <div class="col-xs-6" style="margin:0;padding:0;">
+         <select name="dept_second" id="dept_second" class='dept_second form-control' msgEmpty="全部二级科室" style="height:50px;color:#666">
+           <option value="全部二级科室">全部二级科室</option>
+         </select>
+       </div>
+     </div><!--下拉科室菜单结束-->
+      <!--科室查询结果开始-->
+      <div class="row my-big-box" id="disease">
+        <div class="row my-bar-box">
+          <p style="float:left" name="dept_first-name"; id="dept_first-name">{{data.department}}</p>
+        </div>
+        <!--disease.js-->
+      </div><!--科室查询结果结束-->
+
+      <div class="goTop">
+          <span class="glyphicon glyphicon-chevron-up"></span>
+      </div>
+      <!--footer开始-->
+      <footer class="row text-center" style="background:#333; height:50px; color:white;padding:20px">
+        <p>2020</p>
+      </footer>
+      <!--footer结束-->
+    </div>
+ </body>
+ <script type="text/javascript" src="{% static 'wenda/js/main.js' %}"></script>
+ <script type="text/javascript" src="{% static 'wenda/js/depart.js' %}"></script>
+ <script type="text/javascript" src="{% static 'wenda/js/disease.js' %}"></script>
+ <script type="text/javascript">
+  var jsonDate = {{ data|safe }};
+  console.log(jsonDate);
+  console.log(jsonDate.department);
+  var department_name = jsonDate.department;
+  var page = 0;
+  var page_size = 5;
+
+  // 一级科室改变
+  $(".dept_first").change(function () {
+    $(".dept_second").empty();
+    $(".dept_second").append("<option value='全部二级科室'>全部二级科室</option>");
+    if($(this).val() != "全部科室"){
+      var dept_seconds = dept_second[$(this).val()];
+      for (var i = 0; i < dept_seconds.length; i++) {
+        $option = $("<option/>");
+        $option.attr("value", dept_seconds[i]);
+        $option.text(dept_seconds[i]);
+        $(".dept_second").append($option);
+       }
+    }
+    removeDiseaseDept();
+    document.getElementById("dept_first-name").innerHTML = $(this).val();
+    department_name = $(this).val();
+    page = 0;
+    getDiseaseDept();
+   });
+   // 二级科室改变
+   $(".dept_second").change(function () {
+      removeDiseaseDept();
+      document.getElementById("dept_first-name").innerHTML = $(".dept_first").val();
+      department_name = $(this).val();
+      page = 0;
+      getDiseaseDept();
+    });
+   // 获取疾病信息列表
+   function getDiseaseDept() {
+     $.ajax({
+         url: "{% url 'wenda:department_ajax' %}",
+         type: 'GET',
+         data: {'department_name': department_name, 'page': page, 'page_size': page_size},
+         success: function (data) {
+             var data = eval(data);
+             // console.log(data.disease_list);
+             addDisease(data.disease_list);
+             page += 1;
+             if(data.disease_list.length < page_size) return 0;
+           }
+       })
+   };
+  window.onload = function(){
+      setTimeout(function(){
+          $(window).scrollTop(0);
+          getDiseaseDept();
+      },10);
+  };
+   //滚动条到底部自动加载
+   $(window).scroll(function(){
+      //滚动条距离顶部的高度
+      var scrollTop = $(this).scrollTop();
+      //当前页面的总高度
+      var scrollHeight = $(document).height();
+      //当前可视的页面高度
+      var clientHeight = $(this).height();
+      if(scrollTop + clientHeight + 1 >= scrollHeight){
+        getDiseaseDept();
+      }
+   });
+ </script>
+</html>

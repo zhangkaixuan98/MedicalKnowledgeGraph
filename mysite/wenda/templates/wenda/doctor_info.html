@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+ <head>
+    <title>个人主页</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入 Bootstrap -->
+    {% load static %}
+    <link href="{% static 'wenda/css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'wenda/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'wenda/js/bootstrap.min.js' %}"></script>
+    <style media="screen">
+      .row {
+         margin-right: 0px;
+         margin-left: 0px;
+      }
+      .my-big-box{
+         margin: 10px 0px 0px 0px;
+         background: white;
+         padding: 10px 15px 0px 15px;
+      }
+      .my-bar-box{
+         padding: 7px 15px 0px 5px;
+         border-bottom:2px solid #f5f5f5;
+         font-size:15px;
+      }
+      .my-small-box{
+         padding: 15px;
+         border-bottom:2px solid #f5f5f5;
+      }
+      /* 疾病 */
+      .my-title{
+        font-size: 20px;
+        color: #333;
+        margin:5px;
+      }
+      .my-content{
+        font-size: 18px;
+        color: #999;
+        height:100px;
+        margin:5px;
+        overflow:hidden;
+      }
+      .my-date-reply{
+        font-size: 15px;
+        color: #333;
+        margin-right: 5px;
+      }
+      .more {
+          font-size: 20px;
+          background: white;
+          color:#999;
+          text-align: center;
+          padding:5px 0px 5px 0px;
+          margin: 0px 0px 15px 0px;
+      }
+      .goTop {
+          height: 40px;
+          width: 40px;
+          background: #000000;
+          border-radius: 0px;
+          position: fixed;
+          top: 90%;
+          right: 3%;
+          display: none;
+          padding: 10px;
+          text-align: center;
+      }
+      .goTop span {
+          color: #fff;
+      }
+    </style>
+  </head>
+  <body style="background:#f5f5f5">
+    <div class="container col-xs-12 col-sm-8 col-sm-offset-2">
+     <!--头部开始-->
+     <header class="row" style="padding-bottom: 10px;background:#f5f5f5">
+       <nav class=""style="text-align:center; padding: 10px;">
+         <div class="col-xs-4 col-xs-offset-4" style="font-size: 20px;">
+           <a href="{% url 'wenda:index' %}" style="text-decoration:none;color:#333;">医疗问答</a>
+         </div>
+         <div class="col-xs-2 col-xs-offset-2">
+           <a href="{% url 'wenda:logout'%}" style="text-decoration:none;color:#333;font-size: 18px;">
+             退出登录
+          </a>
+        </div>
+       </nav>
+     </header>
+     <!--头部结束-->
+      <!--搜索开始-->
+      <div class="row" style="background:#f5f5f5">
+          <form action="{% url 'wenda:search' %}" method="POST" >
+          {% csrf_token %}
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="搜索疾病、症状、药物" id="search_text" name="search_text">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default" style="cursor: default;" onclick="onClick()">搜索</button>
+                </span>
+            </div><!-- /input-group -->
+          </form>
+  		</div><!--搜索结束-->
+      <!-- 主体内容-->
+     <div class="row">
+       <div class="row">
+         <!-- 左侧栏 -->
+         <div class="col-sm-8" style="margin:0px;padding:0px">
+           <!--相关问题查询结果-->
+           <div class="row my-big-box" id="question">
+             <div class="row my-bar-box">
+               <p style="float:left">已回复的问题</p>
+               <a href="{% url 'wenda:wenyi' %}" style="float:right">查看更多问题</a>
+             </div>
+           </div>
+           <div class="row more" id="question-more">加载更多</div>
+         </div><!-- 左侧栏 -->
+         <!--右侧栏-->
+         <div class="col-sm-4" style="margin:0px 0px 20px 0px;padding:0px;">
+           <div class="row" style="background:white;height:400px;margin: 10px 0px 10px 10px;padding:10px 0px 10px 0px;">
+             <div class="col-sm-12" style="padding:5px 15px 5px 15px;border-bottom:2px solid #f5f5f5;">
+              <span>个人信息</span>
+              <span style="float:right"><a href="{% url 'wenda:alter_info' %}">修改</a></span>
+             </div>
+             <div class="col-sm-12" style="padding:5px 0px 5px 15px">
+               用户名：{{data.username}}
+             </div>
+             <div class="col-sm-12" style="padding:5px 0px 5px 15px">
+               邮箱：{{data.mail}}
+             </div>
+             <div class="col-sm-12" style="padding:5px 0px 5px 15px">
+               出生日期：{{data.birth}}
+             </div>
+             <div class="col-sm-12" style="padding:5px 0px 5px 15px;border-bottom:2px solid #f5f5f5;">
+               手机号：{{data.tel}}
+             </div>
+             {% if data.confirmed == 1 %}
+                <div class="col-sm-12" style="padding:5px 0px 5px 15px">
+                 医师认证：已认证
+                </div>
+                <div class="col-sm-12" style="padding:5px 0px 5px 15px">
+                  姓名：{{data.name}}
+                </div>
+                <div class="col-sm-12" style="padding:5px 0px 5px 15px">
+                  医院：{{data.hospital}}
+                </div>
+                <div class="col-sm-12" style="padding:5px 0px 5px 15px">
+                  科室：{{data.department}}
+                </div>
+             {% elif  data.confirmed == -1 %}
+               <div class="col-sm-12" style="padding:5px 0px 5px 15px">
+                 认证信息已提交，等待管理员确认
+               </div>
+              {% else %}
+                <div class="col-sm-12" style="padding:5px 0px 5px 15px">
+                  医师未认证，<a href="{% url 'wenda:renz' %}">点击认证</a>
+              </div>
+             {% endif %}
+           </div>
+         </div><!--右侧栏-->
+       </div>
+       <div class="goTop">
+           <span class="glyphicon glyphicon-chevron-up"></span>
+       </div>
+       <!--footer开始-->
+       <footer class="row text-center" style="background:#333; height:50px; color:white;padding:20px">
+         <p>2020</p>
+       </footer>
+       <!--footer结束-->
+       <div class="row" style="height:50px"></div>
+     </div>
+   </div>
+      <!--底部开始-->
+     <div class="container col-xs-12 col-sm-8 col-sm-offset-2" style="height:50px;position: fixed;bottom:0;">
+       <a href="{% url 'wenda:wenda' %}">
+         <div class="col-xs-6 text-center" style="height:50px;background: #212121;padding-bottom: 0;border-top: 1px solid #f5f5f5;padding:15px;color:white;">
+           智能问答
+         </div>
+       </a>
+       <a href="{% url 'wenda:wenyi' %}">
+         <div class="col-xs-6 text-center" style="height:50px;background: white;padding-bottom: 0;border-top: 1px solid #f5f5f5;padding:15px;color:#212121;">
+           快速问医
+         </div>
+       </a>
+     </div><!--底部结束-->
+</body>
+<!--异步加载问题-->
+<script type="text/javascript">
+    var username = '{{ data.name }}';
+    var page = 0;
+    var page_size = 2;
+    function getQuestion(){
+      $.ajax({
+          url: '/doctor/ajax/',
+          type: 'GET',
+          data: {'username': username, 'page': page, 'page_size': page_size},
+          success: function (data) {
+              var data = eval(data);
+              console.log(data);
+              addQuestion(data.reply_list);
+              page += 1;
+              if(data.reply_list.length < page_size && data.reply_list.length >=0 ){
+                var question = document.getElementById('question');
+                var div = document.createElement('div');
+                div.style = "font-size: 20px;color:#999;text-align: center;padding: 10px;0px;10px;0px";
+                div.innerHTML = '无更多问题';
+                question.appendChild(div);
+                $('#question-more').hide();
+              }
+            }
+        })
+    }function addQuestion(reply_list){
+       for(var i in reply_list){
+         var big_box = document.getElementById("question");
+         var newA = document.createElement("a");
+         var small_box = document.createElement("div");
+         var newTitle = document.createElement("div");
+         var newContent = document.createElement("div");
+         var newRow = document.createElement("div");
+         var leftSpan = document.createElement("span");
+         var rightA = document.createElement("a");
+         newA.href = '/question/' + reply_list[i].question_id;
+         newA.style = "text-decoration:none";
+         small_box.className = "row my-small-box";
+         newTitle.innerHTML = '问题：' + reply_list[i].question_title;
+         newContent.innerHTML = '回复内容：' + reply_list[i].content;
+         leftSpan.innerHTML = '回复日期：' + reply_list[i].date;
+         rightA.innerHTML = "删除"
+         rightA.style = "float:right;"
+         rightA.href = "/delete/reply/" + reply_list[i].id;
+         newTitle.className = 'row my-title'
+         newContent.className = 'row my-content'
+         newRow.className = 'row my-date-reply'
+         newA.appendChild(newTitle);
+         newA.appendChild(newContent);
+         newRow.appendChild(leftSpan);
+         newRow.appendChild(rightA);
+         small_box.appendChild(newA);
+         small_box.appendChild(newRow);
+         big_box.appendChild(small_box);
+         // var reforeNode = big_box[big_box.length - 1]
+         // big_box.insertBefore(newA, reforeNode.nextSibling);
+       }
+    }
+    window.onload = function(){
+        setTimeout(function(){
+            $(window).scrollTop(0);
+            getQuestion();
+        },10);
+    };
+    $('#question-more').click(function(){  //点击加载更多
+      getQuestion();
+    })
+</script>
+<!--返回顶部开始-->
+<script type="text/javascript">
+    function goTop(min_height) {
+        $(".goTop").click(
+            function() {
+                $('html,body').animate({
+                    scrollTop: 0
+                }, 700);
+            });
+        //获取页面的最小高度，无传入值则默认为600像素
+        min_height=min_height?min_height:400;
+        //为窗口的scroll事件绑定处理函数
+        $(window).scroll(function() {
+            //获取窗口的滚动条的垂直位置
+            var s = $(window).scrollTop();
+            //当窗口的滚动条的垂直位置大于页面的最小高度时，让返回顶部元素渐现，否则渐隐
+            if (s > min_height) {
+                $(".goTop").fadeIn(100);
+            } else {
+                $(".goTop").fadeOut(200);
+            }
+        });
+    }
+
+    $(function() {
+        goTop();
+    });
+</script> <!--返回顶部函数结束-->

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+ <head>
+    <title>问医</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入 Bootstrap -->
+    {% load static %}
+    <link href="{% static 'wenda/css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'wenda/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'wenda/js/bootstrap.min.js' %}"></script>
+    <style media="screen">
+      .row {
+         margin-right: 0px;
+         margin-left: 0px;
+      }
+      .my-big-box{
+         margin: 10px 0px 0px 0px;
+         background: white;
+         padding: 10px 15px 0px 15px;
+      }
+      .my-bar-box{
+         padding: 7px 15px 0px 5px;
+         font-size:15px;
+      }
+      .my-small-box{
+         padding: 15px;
+         border-bottom:2px solid #f5f5f5;
+      }
+      /* 疾病 */
+      .my-title{
+        font-size: 20px;
+        color: #333;
+        margin:5px;
+      }
+      .my-content{
+        font-size: 18px;
+        color: #666;
+        height:100px;
+        margin:5px;
+        overflow:hidden;
+      }
+      .my-date-reply{
+        float: right;
+        font-size: 15px;
+        color: #999;
+        margin-right: 5px;
+      }
+      /* 输入框设置 */
+      textarea{
+        height:80px;
+        width: 100%;
+        resize: none;
+        outline:none;
+        resize: none;
+        overflow-y:auto;
+      }
+      .goTop {
+          height: 40px;
+          width: 40px;
+          background: #000000;
+          border-radius: 0px;
+          position: fixed;
+          top: 90%;
+          right: 3%;
+          display: none;
+          padding: 10px;
+          text-align: center;
+      }
+      .goTop span {
+          color: #fff;
+      }
+    </style>
+  </head>
+  <body style="background:#f5f5f5">
+    <div class="container col-xs-12 col-sm-8 col-sm-offset-2">
+     <!--头部开始-->
+     <header class="row" style="padding-bottom: 10px;background:#f5f5f5">
+       <nav class=""style="text-align:center; padding: 10px;">
+         <div class="col-xs-4 col-xs-offset-4" style="font-size: 20px;">
+           <a href="{% url 'wenda:index' %}" style="text-decoration:none;color:#333;">医疗问答</a>
+         </div>
+         <div class="col-xs-1 col-xs-offset-3">
+           <a href="{% url 'wenda:login'%}" style="text-decoration:none;color:#333;">
+             <img src="{% static 'wenda/images/user.png' %}" style="width:28px; height:28px;">
+          </a>
+        </div>
+       </nav>
+     </header><!--头部结束-->
+      <!--搜索开始-->
+      <div class="row" style="background:#f5f5f5">
+          <form action="{% url 'wenda:search' %}" method="POST" >
+          {% csrf_token %}
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="搜索疾病、症状、药物" id="search_text" name="search_text">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default" style="cursor: default;" onclick="onClick()">搜索</button>
+                </span>
+            </div><!-- /input-group -->
+          </form>
+      </div><!--搜索结束-->
+     <div class="row my-big-box" id="question">
+        <div class="row my-bar-box">
+          <p style="float:left">问题详情</p>
+        </div>
+         <div class="row my-small-box">
+           <div class="row my-title">{{question.title}}</div>
+           <div class="row my-content">{{question.content}}</div>
+           <div class="row my-date-reply">日期：{{question.date}}  时间：{{question.time}}</div>
+         </div>
+       {% if user_role == 'doctor' and confirmed == 1%}
+        <div class="row my-bar-box">
+          <p style="float:left">添加回复</p>
+        </div>
+       <div class="row my-small-box">
+         <!--聊天输入框开始-->
+         <div class="row">
+           <textarea name="content" id="content"></textarea>
+         </div><!--聊天输入框结束-->
+         <!--发送按钮开始-->
+         <div class="row">
+           <button  type="button" id="replysub" style="float:right">回复</button>
+         </div><!--发送按钮结束-->
+       </div>
+       {% endif %}
+      <div class="row my-bar-box">
+        <p style="float:left">相关回复</p>
+      </div>
+      <div class="" id='all_reply'>
+           {% for reply_info in reply_list %}
+           <div class="row my-small-box" >
+               <div class="row" style="font-size:18px;color:#333;margin:5px 0px 10px 5px;">
+                 {{reply_info.content}}
+               </div>
+               <div class="row" style="font-size:15px;color:#999;margin:5px 0px 5px 5px;">
+                 <span>
+                   {{reply_info.doctor.name}}&nbsp;&nbsp;&nbsp;{{reply_info.doctor.hospital}}&nbsp;&nbsp;&nbsp;{{reply_info.doctor.department}}
+                 </span>
+                 <span style="float:right">
+                   日期：{{reply_info.date}}&nbsp;&nbsp;&nbsp;时间：{{reply_info.time}}
+                 </span>
+               </div>
+           </div>
+          {% empty %}
+             <div class="row my-small-box">
+               <p>暂无回复</p>
+             </div>
+         {% endfor %}
+      </div>
+     </div>
+     <div class="goTop">
+         <span class="glyphicon glyphicon-chevron-up"></span>
+     </div>
+     <!--footer开始-->
+     <footer class="row text-center" style="background:#333; height:50px; color:white;padding:20px">
+       <p>2020</p>
+     </footer>
+     <!--footer结束-->
+   </div>
+</body>
+<script type="text/javascript">
+    console.log({{question.id|safe}});
+    var username = '{{username|safe}}';
+    var question_id = '{{question.id|safe}}';
+    function addReply(reply, doctor){
+      console.log(reply, doctor);
+       var all_reply = document.getElementById("all_reply");
+       var small_box = document.createElement("div");
+       var newContent = document.createElement("div");
+       var newRow = document.createElement("div");
+       var newDoctor = document.createElement("span");
+       var newDate = document.createElement("span");
+       newContent.innerHTML = reply.content;
+       newDoctor.innerHTML = doctor.name+'&nbsp;&nbsp;&nbsp;'+doctor.hospital+'&nbsp;&nbsp;&nbsp;'+doctor.department;
+       newDate.innerHTML = '日期：'+reply.date+'&nbsp;&nbsp;&nbsp;时间：'+reply.time;
+       newDate.style = 'float:right'
+       newRow.style = 'font-size:15px;color:#999;margin:5px 0px 5px 5px;'
+       newContent.style = 'font-size:18px;color:#333;margin:5px 0px 10px 5px;'
+       small_box.className = 'row my-small-box'
+       newRow.appendChild(newDoctor);
+       newRow.appendChild(newDate);
+       small_box.appendChild(newContent);
+       small_box.appendChild(newRow);
+       all_reply.prepend(small_box);
+    }
+    window.onload = function(){
+        var Replysub = document.getElementById("replysub");
+        Replysub.onclick = function(){
+            var Content = document.getElementById("content");
+            if(Content.value == ""){
+                alert("回复不能为空");
+                return;
+            }
+            else {
+                $.ajax({
+                    url: '/question_reply/ajax/',
+                    type: 'GET',
+                    data: {'username': username, 'question': {{question.id|safe}}, 'content': Content.value},
+                    success: function (data) {
+                        var data = eval(data);
+                        console.log(data);
+                        if(data.success){
+                          addReply(data.reply, data.doctor);
+                          Content.value = '';
+                          alert('回复成功');
+                        }
+                        else {
+                          alert('回复失败');
+                        }
+                      }
+                  })
+                return;
+              } // else
+            } //onclick
+        }//onload
+
+
+</script>
+<!--返回顶部开始-->
+<script type="text/javascript">
+    function goTop(min_height) {
+        $(".goTop").click(
+            function() {
+                $('html,body').animate({
+                    scrollTop: 0
+                }, 700);
+            });
+        //获取页面的最小高度，无传入值则默认为600像素
+        min_height=min_height?min_height:400;
+        //为窗口的scroll事件绑定处理函数
+        $(window).scroll(function() {
+            //获取窗口的滚动条的垂直位置
+            var s = $(window).scrollTop();
+            //当窗口的滚动条的垂直位置大于页面的最小高度时，让返回顶部元素渐现，否则渐隐
+            if (s > min_height) {
+                $(".goTop").fadeIn(100);
+            } else {
+                $(".goTop").fadeOut(200);
+            }
+        });
+    }
+
+    $(function() {
+        goTop();
+    });
+</script> <!--返回顶部函数结束-->

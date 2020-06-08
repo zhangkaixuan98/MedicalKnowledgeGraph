@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+ <head>
+    <title>首页</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入 Bootstrap -->
+    {% load static %}
+    <link href="{% static 'wenda/css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'wenda/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'wenda/js/bootstrap.min.js' %}"></script>
+    <style media="screen">
+      .row {
+         margin-right: 0px;
+         margin-left: 0px;
+      }
+      .my-big-box{
+         margin: 10px 0px 10px 0px;
+      }
+      .my-bar-box{
+         background: white;
+         margin: 5px 0px 5px 0px;
+         padding: 7px 15px 0px 15px;
+         font-size:15px;
+      }
+      .my-small-box{
+         background: white;
+         margin: 5px 0px 5px 0px;
+         padding: 15px;
+      }
+      .title{
+        color: #333;
+        height:20px;
+        margin:5px;
+        overflow:hidden;
+      }
+      .dept{
+        color: #ff9900;
+        margin-left: 5px;
+      }
+      .brief{
+        color: #999;
+        height:40px;
+        margin:5px;
+        overflow:hidden;
+      }
+      .reach-left{
+        color: #333;
+        margin-right: 5px;
+      }
+      .symptom{
+        color: #666;
+        height:20px;
+        margin:5px;
+        overflow:hidden
+      }
+      /* 滚动条框设置 */
+      *::-webkit-scrollbar {
+        width: 7px;
+        border-radius:3px;
+      }
+
+      /* 滚动条设置 */
+      *::-webkit-scrollbar-thumb {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+        background-color: #555;
+      }
+      .container>div{
+        margin-bottom: 10px;
+      }
+      .my-a{
+        text-decoration:none;
+        style="text-decoration:none;color:#333;"
+      }
+      p{
+        text-decoration:none;
+      }
+      .goTop {
+          height: 40px;
+          width: 40px;
+          background: #000000;
+          border-radius: 0px;
+          position: fixed;
+          top: 90%;
+          right: 3%;
+          display: none;
+          padding: 10px;
+          text-align: center;
+      }
+      .goTop span {
+          color: #fff;
+      }
+    </style>
+ </head>
+ <body style="background:#f5f5f5">
+   <div class="container col-xs-12 col-sm-8 col-sm-offset-2">
+     <!--头部开始-->
+     <header class="row" style="padding-bottom: 10px;background:#f5f5f5">
+       <nav class=""style="text-align:center; padding: 10px;">
+         <div class="col-xs-4 col-xs-offset-4" style="font-size: 20px;">
+           <a href="{% url 'wenda:index' %}" style="text-decoration:none;color:#333;">医疗问答</a>
+         </div>
+         <div class="col-xs-1 col-xs-offset-3">
+           <a href="{% url 'wenda:login'%}" style="text-decoration:none;color:#333;">
+             <img src="{% static 'wenda/images/user.png' %}" style="width:28px; height:28px;">
+          </a>
+        </div>
+       </nav>
+     </header>
+     <!--头部结束-->
+      <!--搜索开始-->
+      <div class="row" style="background:#f5f5f5">
+          <form action="{% url 'wenda:search' %}" method="POST" >
+          {% csrf_token %}
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="搜索疾病、症状、药物" id="search_text" name="search_text">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default" style="cursor: default;" onclick="onClick()">搜索</button>
+                </span>
+            </div><!-- /input-group -->
+          </form>
+  		</div><!--搜索结束-->
+      <!--问答开始-->
+      <div class="row my-big-box">
+        <div class="row my-small-box" style="text-align:center;box-shadow: #e9e9e9 0px 0px 1px 1px;margin:0 0 0 0;border-radius:2px">
+          <a href="{% url 'wenda:search_more' 'disease'%}" class="col-xs-2" style="text-decoration:none;color:#333;margin-right:4.1666%;">
+            <img src="{% static 'wenda/images/search_jib.png' %}" alt="查疾病">
+            <p>查疾病</p>
+          </a>
+          <a href="{% url 'wenda:search_more' 'symptom'%}" class="col-xs-2" style="text-decoration:none;color:#333;margin-right:4.1666%;">
+            <img src="{% static 'wenda/images/search_zz.png' %}" alt="查症状">
+            <p>查症状</p>
+          </a>
+          <a href="{% url 'wenda:search_more' 'drug'%}" class="col-xs-2" style="text-decoration:none;color:#333;margin-right:4.1666%;">
+            <img src="{% static 'wenda/images/search_yao.png' %}" alt="查药物">
+            <p>查药物</p>
+          </a>
+          <a href="{% url 'wenda:wenda'%}" class="col-xs-2" style="text-decoration:none;color:#333;margin-right:4.1666%;">
+            <img src="{% static 'wenda/images/qa.png' %}" alt="智能问答">
+            <p>智能问答</p>
+          </a>
+          <a href="{% url 'wenda:wenyi'%}" class="col-xs-2" style="text-decoration:none;color:#333;">
+            <img src="{% static 'wenda/images/wy.png' %}" alt="快速问医">
+            <p>快速问医</p>
+          </a>
+        </div>
+      </div><!--问答结束-->
+      <!--找医生开始-->
+      <!-- <div class="row my-big-box">
+        <div class="col-xs-12 col-md-12 center-block" style="height:70px; background:white;">
+          <div class="col-xs-3 center-block" style="height:70px; padding:10px;">
+            <img src="{% static 'wenda/images/zys.png' %}" style="width:108px; height:44px">
+          </div>
+          <div class="col-xs-9" style="margin:0;padding:0;">
+            <div class="col-xs-6 center-block" style="height:40px;padding: 0 0 0 25px;margin-top:17px">
+                <input type="text" class="form-control" placeholder="按科室找">
+            </div>
+            <div class="col-xs-6" style="height:40px;padding: 0 0 0 25px;margin-top:17px">
+                <input type="text" class="form-control" placeholder="按医院找">
+            </div>
+          </div>
+        </div>
+      </div> --><!--找医生结束-->
+      <!--科室开始-->
+      <div class="row my-big-box">
+        <div class="row my-bar-box">
+          <p style="float:left">按科室查</p>
+          <a href="{% url 'wenda:department' '全部科室'%}" style="text-decoration:none; float:right; color:#333">更多</a>
+        </div>
+        <!--my-small-box-->
+        <div class="row my-small-box">
+          <!--妇产科-->
+          <a class="col-xs-2" align="center" href="{% url 'wenda:department' '妇产科'%}" style="text-decoration:none;color:#333;margin-right: 4.1666%;">
+                <img src="{% static 'wenda/images/depart1.png' %}" alt="妇产科">
+                <p>妇产科</p>
+          </a><!--妇产科-->
+          <!--内科-->
+          <a class="col-xs-2" align="center" href="{% url 'wenda:department' '内科'%}" style="text-decoration:none;color:#333;margin-right: 4.1666%;">
+              <img src="{% static 'wenda/images/depart2.png' %}">
+              <p>内 科</p>
+          </a><!--内科-->
+          <!--外科-->
+          <a class="col-xs-2" align="center" href="{% url 'wenda:department' '外科'%}" style="text-decoration:none;color:#333;margin-right: 4.1666%;">
+              <img src="{% static 'wenda/images/depart3.png' %}">
+              <p>外 科</p>
+          </a><!--外科-->
+          <!--儿科-->
+          <a class="col-xs-2" align="center" href="{% url 'wenda:department' '儿科'%}" style="text-decoration:none;color:#333;margin-right: 4.1666%;">
+              <img src="{% static 'wenda/images/depart4.png' %}">
+              <p>儿 科</p>
+          </a><!--儿科-->
+          <!--皮肤科-->
+          <a class="col-xs-2" align="center" href="{% url 'wenda:department' '皮肤性病科'%}" style="text-decoration:none;color:#333;">
+              <img src="{% static 'wenda/images/depart5.png' %}">
+              <p>皮肤科</p>
+          </a><!--皮肤科-->
+          <!--五官科-->
+          <a class="col-xs-2" align="center" href="{% url 'wenda:department' '五官科'%}" style="text-decoration:none;color:#333;margin-right: 4.1666%;">
+              <img src="{% static 'wenda/images/depart6.png' %}">
+              <p>五官科</p>
+          </a><!--五官科-->
+          <!--中医科-->
+          <a class="col-xs-2" align="center" href="{% url 'wenda:department' '中医科'%}" style="text-decoration:none;color:#333;margin-right: 4.1666%;">
+              <img src="{% static 'wenda/images/depart7.png' %}">
+              <p>中医科</p>
+          </a><!--中医科-->
+          <!--男科-->
+          <a class="col-xs-2" align="center" href="{% url 'wenda:department' '男科'%}" style="text-decoration:none;color:#333;margin-right: 4.1666%;">
+            <img src="{% static 'wenda/images/depart8.png' %}">
+            <p>男 科</p>
+          </a><!--男科-->
+          <!--肿瘤科-->
+          <a class="col-xs-2" align="center" href="{% url 'wenda:department' '肿瘤科'%}" style="text-decoration:none;color:#333;margin-right: 4.1666%;">
+            <img src="{% static 'wenda/images/depart9.png' %}">
+            <p>肿瘤科</p>
+          </a><!--肿瘤科-->
+          <!--神经科-->
+          <a class="col-xs-2" align="center" href="{% url 'wenda:department' '精神科'%}" style="text-decoration:none;color:#333;">
+            <img src="{% static 'wenda/images/depart10.png' %}">
+            <p>精神科</p>
+          </a><!--神经科-->
+        </div><!--my-small-box-->
+      </div><!--科室结束-->
+      <!--女性常见病开始-->
+      <div class="row my-big-box">
+        <div class="row my-bar-box">
+          <p style="float:left">女性常见病</p>
+          <a href="{% url 'wenda:population' '女性'%}" style="text-decoration:none; float:right; color:#333">更多</a>
+        </div>
+        <!--阴道炎-->
+        <a href="{% url 'wenda:disease' '阴道炎'%}" style="text-decoration:none;">
+          <div class="row my-small-box">
+            <div class="row title">
+              阴道炎<span class="dept">[妇科]</span>
+            </div>
+            <div class="row brief">
+                阴道炎是阴道黏膜及黏膜下结缔组织的炎症，是妇科门诊常见的疾病。正常健康妇女，由于解剖学及生物化学特点，阴道对病原体的侵入有自然防御功能，当阴道的自然防御功能遭到破坏，则病原体易于侵入，导致阴道炎症，幼女及绝经后妇女由于雌激素缺乏，阴道上皮菲薄，细胞内糖原含量减少，阴道PH高达7左右，故阴道抵抗力低下，比青春期及育龄妇女易受感染。中医论证，长期用药用玫瑰泡水喝可缓解治疗阴道炎。
+            </div>
+            <div class="row symptom">
+              <span class="reach-left">相关症状:</span>白带发黄、赤白带下、水样白带、 阴道粘连、性交疼痛、绝经后白带增多、白带呈豆腐渣状、瘙痒、白带黑色、白带呈褐色、尿道刺痒、白带稀少、白带奶白色、白带呈鼻涕状、外阴起疙瘩、白带呈黄绿色、阴唇肥大、阴唇发黑、尿道口疼、黏膜白斑、女性小腹疼痛、外阴烧灼刺激感
+            </div>
+          </div>
+        </a><!--阴道炎-->
+        <!--月经不调-->
+        <a href="{% url 'wenda:disease' '月经不调'%}" style="text-decoration:none;">
+          <div class="row my-small-box">
+            <div class="row title">
+              月经不调<span class="dept">[妇科]</span>
+            </div>
+            <div class="row brief">
+                月经不调也称月经失调，是一种常见的妇科常见病，表现为月经周期或出血量的异常，或是月经前、经期时的腹痛及全身症状，病因可能是器质性病变或是功能失常。许多全身性疾病如血液病，高血压病，肝病、内分泌病、流产，宫外孕，葡萄胎，生殖道感染、肿瘤(如卵巢肿瘤、子宫肌瘤)等均可引起月经失调。自月经初潮起，就应学习，了解一些卫生常识，对月经来潮这一生理现象有一个正确的认识，消除恐惧及紧张心理，可预防原发性痛经产生或提高痛阈减轻疼痛程度，注意经期及性生活卫生，防止经，产期间上行感染，积极预防和治疗可能引起经血潴留的疾病。
+            </div>
+            <div class="row symptom">
+              <span class="reach-left">相关症状:</span>月经周期改变、月经量多、月经血块过多、经期提前、经期推迟、经期小腹坠痛、月经发黑、经期延长、经期前后小腹坠痛、撤退性出血、经前出血、继发性闭经、绝经年龄过早、 血崩
+            </div>
+          </div>
+        </a><!--月经不调-->
+      </div><!--女性常见病结束-->
+      <!--男性常见病开始-->
+      <div class="row my-big-box">
+        <div class="row my-bar-box">
+          <p style="float:left">男性常见病</p>
+          <a href="{% url 'wenda:population' '男性'%}" style="text-decoration:none; float:right; color:#333">更多</a>
+        </div>
+        <!--阳痿-->
+        <a href="{% url 'wenda:disease' '阳痿'%}" style="text-decoration:none;">
+          <div class="row my-small-box">
+            <div class="row title">
+              阳痿<span class="dept">[男科]</span>
+            </div>
+            <div class="row brief">
+                阳痿是指男性在性生活时，阴茎不能勃起或勃起不坚或坚而不久，不能完成正常性生活，或阴茎根本无法插入阴道进行性交，阳痿又称“阳事不举”等，是最常见的男子性功能障碍性疾病，偶尔1~2次性交失败，不能认为就是患了阳痿。只有在性交失败率超过25%时才能诊断为阳痿，据国外有关资料统计，阳痿患者约占全部男性性功能障碍的37%~42%。国内有关调查表明，在成年男性中约有10%的人发生阳痿。阳痿的发生率随年龄的增长而上升。
+            </div>
+            <div class="row symptom">
+              <span class="reach-left">相关症状:</span>快感缺乏、尿液有白色沉淀物、勃起时间短、疲劳、焦虑、睾丸萎缩、抑郁、无睾丸
+            </div>
+          </div>
+        </a><!--阳痿-->
+        <!--早泄-->
+        <a href="{% url 'wenda:disease' '早泄'%}" style="text-decoration:none;">
+          <div class="row my-small-box">
+            <div class="row title">
+              早泄<span class="dept">[男科]</span>
+            </div>
+            <div class="row brief">
+                早泄是指阴茎插入阴道后，在女性尚未达到性高潮，而男性的性交时间短于2分钟，提早射精而出现的性交不和谐障碍，一般男性30%均有此情况，问题虽小，但却使性生活质量不高，也可能引起阳痿等其他性功能障碍，后果严重，应引起重视和及早治疗。一般认为，早泄是指男子在阴茎勃起之后，未进入阴道之前，或正当纳入，以及刚刚进入而尚未抽动时便已射精，阴茎也自然随之疲软并进入不应期的现象。临床上对阴茎勃起未进入阴道即射精，诊断为早泄。而能进入阴道进行性交者，如果没有动几下就很快射精，也定义为早泄。
+            </div>
+            <div class="row symptom">
+              <span class="reach-left">相关症状:</span>性交困难、尿液有白色沉淀物、乏力、头晕、焦虑、舌苔黄、快感缺乏
+            </div>
+          </div>
+        </a><!--早泄-->
+      </div><!--男性常见病结束-->
+      <!--老年人常见病开始-->
+      <div class="row my-big-box">
+        <div class="row my-bar-box">
+          <p style="float:left">老年人常见病</p>
+          <a href="{% url 'wenda:population' '老年'%}" style="text-decoration:none; float:right; color:#333">更多</a>
+        </div>
+        <!--冠心病-->
+        <a href="{% url 'wenda:disease' '冠心病'%}" style="text-decoration:none;">
+          <div class="row my-small-box">
+            <div class="row title">
+              冠心病<span class="dept">[心内科]</span>
+            </div>
+            <div class="row brief">
+                冠状动脉粥样硬化性心脏病是指冠状动脉粥样硬化使血管狭窄或阻塞，导致心肌缺血缺氧或者坏死，称为冠心病，冠心病的范围可能更广泛，还包括冠脉炎症，栓塞，痉挛等因素导致管腔狭窄或者闭塞，临床中，常分为稳定性冠心病和急性冠状动脉综合征。
+            </div>
+            <div class="row symptom">
+              <span class="reach-left">相关症状:</span>心血管堵塞、心悸、乏力、心慌、慢性房颤、心脏左室舒张功能减退、心律失常、呼吸困难、心跳过速、心脑供血不足、联合瓣膜脱垂、胸闷气短、频发房性早搏、心力衰竭、心前区疼痛、心室纤颤、房颤、神经官能症状、心肌劳损、胸闷、心血少、胸窝疼痛、促脉、胸闷憋气、早搏、动脉造影异常、心脏性猝死、冷汗、高同型半胱氨酸血症、心脏骤停、窦房结病变、气急、气短、不稳定性心绞痛、猝死、晕厥、胸痛
+            </div>
+          </div>
+        </a><!--冠心病-->
+        <!--骨质疏松-->
+        <a href="{% url 'wenda:disease' '骨质疏松'%}" style="text-decoration:none;">
+          <div class="row my-small-box">
+            <div class="row title">
+              骨质疏松<span class="dept">[骨外科]</span>
+            </div>
+            <div class="row brief">
+                骨质疏松症(osteoporosis)是一种系统性骨病，其特征是骨量下降和骨的微细结构破坏，表现为骨的脆性增加，因而骨折的危险性大为增加，即使是轻微的创伤或无外伤的情况下也容易发生骨折。骨质疏松症是一种多因素所致的慢性疾病。在骨折发生之前，通常无特殊临床表现。该病女性多于男性，常见于绝经后妇女和老年人。
+            </div>
+            <div class="row symptom">
+              <span class="reach-left">相关症状:</span>弥漫性骨质疏松、骨痛、腓肠肌痉挛性疼痛、脊柱骨质改变、门齿间距增宽、骨代谢减低、四肢长骨和肌肉无规律的酸痛、女性腰痛、驼背、胸腰椎压缩性骨折、小腿肚抽筋、疲劳、全身骨骼肌收缩、绝经
+            </div>
+          </div>
+        </a><!--骨质疏松-->
+      </div><!--老年人常见病结束-->
+      <!--儿童常见病开始-->
+      <div class="row my-big-box">
+        <div class="row my-bar-box">
+          <p style="float:left">儿童常见病</p>
+          <a href="{% url 'wenda:population' '儿童'%}" style="text-decoration:none; float:right; color:#333">更多</a>
+        </div>
+        <!--小儿发烧-->
+        <a href="{% url 'wenda:disease' '小儿发烧'%}" style="text-decoration:none;">
+          <div class="row my-small-box">
+            <div class="row title">
+              小儿发烧<span class="dept">[小儿内科]</span>
+            </div>
+            <div class="row brief">
+                小儿发烧是指当小儿发热，温度在39.1～41℃左右。发热时间超过两周为长期发热。小儿正常体温常以肛温36.5～37.5℃，腋温36～37℃衡量。通常情况下，腋温比口温（舌下）低0.2～0.5℃，肛温比腋温约高0.5℃左右。若腋温超过37.4℃，且一日间体温波动超过1℃以上，可认为发热。所谓低热，指腋温为37.5℃～38℃、中度热38.1～39℃、高热39.1～40℃、超高热则为41℃以上。
+            </div>
+            <div class="row symptom">
+              <span class="reach-left">相关症状:</span>喘息、低热、发烧、高热、急腹症、淋巴结肿大、疱疹、水泡、痰鸣音、哮鸣音、咽部充血、瘀斑、粒细胞增多
+            </div>
+          </div>
+        </a><!--小儿发烧-->
+        <!--小儿湿疹-->
+        <a href="{% url 'wenda:disease' '小儿湿疹'%}" style="text-decoration:none;">
+          <div class="row my-small-box">
+            <div class="row title">
+              小儿湿疹<span class="dept">[皮肤科]</span>
+            </div>
+            <div class="row brief">
+                小儿湿疹是一种变态反应性皮肤病，就是平常说的过敏性皮肤病。主要原因是对食入物、吸入物或接触物不耐受或过敏所致。患有湿疹的孩子起初皮肤发红、出现皮疹、继之皮肤发糙、脱屑，抚摩孩子的皮肤如同触摸在砂纸上一样。遇热、遇湿都可使湿疹表现显著。小儿湿疹和成人湿疹，本质上是一回事。但小儿湿疹与成人湿疹症状不完全一样。 小儿湿疹由婴儿湿疹延续而来；或婴儿期未发病而到幼儿期才起病。
+            </div>
+            <div class="row symptom">
+              <span class="reach-left">相关症状:</span>斑丘疹、皮肤斑丘疹、风团、婴儿热痱、婴儿湿疹结痂
+            </div>
+          </div>
+        </a><!--小儿湿疹-->
+      </div><!--儿童常见病结束-->
+      <div class="goTop">
+          <span class="glyphicon glyphicon-chevron-up"></span>
+      </div>
+      <!--footer开始-->
+      <footer class="row text-center" style="background:#333; height:50px; color:white;padding:20px">
+        <p>2020</p>
+      </footer>
+      <!--footer结束-->
+    </div>
+ </body>
+ <!--搜索输入-->
+<script type="text/javascript">
+    function onClick() {
+        var text = document.getElementById("search_text");
+        console.log(text.value);
+        if(text.value == '')
+            alert('输入为空');
+
+    }
+</script>
+ <!--返回顶部开始-->
+ <script type="text/javascript">
+     function goTop(min_height) {
+         $(".goTop").click(
+             function() {
+                 $('html,body').animate({
+                     scrollTop: 0
+                 }, 700);
+             });
+         //获取页面的最小高度，无传入值则默认为600像素
+         min_height=min_height?min_height:400;
+         //为窗口的scroll事件绑定处理函数
+         $(window).scroll(function() {
+             //获取窗口的滚动条的垂直位置
+             var s = $(window).scrollTop();
+             //当窗口的滚动条的垂直位置大于页面的最小高度时，让返回顶部元素渐现，否则渐隐
+             if (s > min_height) {
+                 $(".goTop").fadeIn(100);
+             } else {
+                 $(".goTop").fadeOut(200);
+             }
+         });
+     }
+
+     $(function() {
+         goTop();
+     });
+ </script> <!--返回顶部函数结束-->
+</html>

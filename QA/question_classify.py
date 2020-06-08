@@ -1,11 +1,12 @@
 from Cut import BiMM
-import question_analysis
+from QA import question_analysis
 import re
 import os
 
 
 class QuestionClassify:
     def __init__(self):
+        self.feedback = 'Sorry，请用问句的形式提问，或者反馈一下。'
         BiMM.init()
         self.path = '/'.join(os.path.dirname(__file__).split('\\'))
         self.analysis = question_analysis.QuestionAnalysis()
@@ -28,50 +29,28 @@ class QuestionClassify:
         elif "key_sf" in POS:
             kind = "key_sf"
         if kind == "key_ts":
-            print(sentence, "特殊问句\n", words)
-            # print(sentence)
+            # print(sentence, "特殊问句\n", words)
+            print(f'\n{sentence}')
             return self.analysis.question_ts(sentence, words)
         elif kind == "key_tz":
             print(sentence, "特指问句\n", words)
-            # print(sentence)
+            print(f'\n{sentence}')
             return self.analysis.question_tz(sentence, words)
         elif kind == "key_xz":
-            print(sentence, "选择问句\n", words)
-            # print(sentence)
+            # print(sentence, "选择问句\n", words)
+            print(f'\n{sentence}')
             return self.analysis.question_xz(sentence, words)
         elif kind == "key_zf":
-            print(sentence, "正反问句\n", words)
-            # print(sentence)
+            # print(sentence, "正反问句\n", words)
+            print(f'\n{sentence}')
             return self.analysis.question_zf(sentence, words)
         elif kind == "key_sf":
-            print(sentence, "是非问句\n", words)
-            # print(sentence)
+            # print(sentence, "是非问句\n", words)
+            print(f'\n{sentence}')
             return self.analysis.question_sf(sentence, words)
         else:
-            print('Sorry，请用问句的形式提问，或者反馈一下。')
             self.write_log(sentence)
-            return
-        # if "key_ts" in POS:
-        #     kind = "特殊问句"
-        #     print(sentence, kind)
-        #     print(words)
-        #     self.analysis.question_ts(sentence, words)
-        # elif "key_tz" in POS:
-        #     kind = "特指问句"
-        #     print(sentence, kind)
-        #     self.analysis.question_tz(sentence, words)
-        # elif "key_xz" in POS:
-        #     kind = "选择问句"
-        #     print(sentence, kind)
-        #     self.analysis.question_xz(sentence, words)
-        # elif "key_zf" in POS:
-        #     kind = "正反问句"
-        #     print(sentence, kind)
-        #     self.analysis.question_zf(sentence, words)
-        # elif "key_sf" in POS:
-        #     kind = "是非问句"
-        #     print(sentence, kind)
-        #     self.analysis.question_sf(sentence, words)
+            return self.feedback
 
     def write_log(self, sentence):
         with open(f'{self.path}/log.txt', 'a+', encoding='utf-8') as f:
@@ -104,6 +83,6 @@ class QuestionClassify:
 
 if __name__ == '__main__':
     handler = QuestionClassify()
-    handler.main()
-    # handler.test()
+    # handler.main()
+    handler.test()
     # handler.debug()

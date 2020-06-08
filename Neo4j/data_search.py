@@ -35,6 +35,8 @@ class DataSearch:
                 return b
         elif entity_type == "disease":
             return self.disease.search(attr, entity_name)
+        elif entity_type == "alias":
+            return self.alias.search(attr, entity_name)
         elif entity_type == "symptom":
             return self.symptom.search(attr, entity_name)
         elif entity_type == "drug":

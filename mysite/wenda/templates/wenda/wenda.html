@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 引入 Bootstrap -->
+    {% load static %}
+  <link href="{% static 'wenda/css/bootstrap.min.css' %}" rel="stylesheet">
+  <script src="{% static "wenda/js/jquery-3.3.1.min.js" %}"></script>
+  <style type="text/css">
+    .row {
+       margin-right: 0px;
+       margin-left: 0px;
+    }
+    .user-message{
+      width:80%;
+      margin-right: 3%;
+      float:right;
+    }
+    .user-message p{
+      display:inline-block;
+      background:#12b7f5;
+      border-radius:10px;
+      color:#fff;
+      padding:10px;
+      margin:5px;
+      float: right;
+    }
+    .robot-message{
+      width:80%;
+      margin-left: 3%;
+      float:left;
+    }
+    .robot-message p{
+      display:inline-block;
+      background:#b7b7b7;
+      border-radius:10px;
+      color:#000;
+      padding:10px;
+      margin:5px;
+      float: left;
+    }
+    /* 输入框设置 */
+    textarea{
+      height:80px;
+      width: 100%;
+      resize: none;
+      background: #cccccc;
+      border: none;
+      outline:none;
+      resize: none;
+      overflow-y:auto;
+    }
+    /* 滚动条框设置 */
+    *::-webkit-scrollbar {
+      width: 7px;
+    }
+
+    /* 滚动条设置 */
+    *::-webkit-scrollbar-thumb {
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+      background-color: #acacac;
+      border-radius:3px;
+    }
+    /* 按钮设置 */
+    .btn-send{
+      width: 50px;
+      height: 25px;
+      float:right;
+      margin:5px 0px 5px 5px;
+      background: #212121;
+      color: white;
+      border: none;
+      outline:none;
+    }
+  </style>
+</head>
+<body style="background:#f5f5f5">
+  <div class="container col-xs-12 col-sm-8 col-sm-offset-2">
+    <!--头部开始-->
+    <header class="row" style="padding-bottom: 10px;background:#f5f5f5">
+      <nav class=""style="text-align:center; padding: 10px;">
+        <div class="col-xs-4 col-xs-offset-4" style="font-size: 20px;">
+          <a href="{% url 'wenda:index' %}" style="text-decoration:none;color:#333;">医疗问答</a>
+        </div>
+        <div class="col-xs-1 col-xs-offset-3">
+          <a href="{% url 'wenda:login'%}" style="text-decoration:none;color:#333;">
+            <img src="{% static 'wenda/images/user.png' %}" style="width:28px; height:28px;">
+         </a>
+       </div>
+      </nav>
+    </header>
+    <!--头部结束-->
+    <!--搜索开始-->
+    <div class="row" style="background:#f5f5f5">
+        <form action="{% url 'wenda:search' %}" method="POST" >
+        {% csrf_token %}
+          <div class="input-group">
+              <input type="text" class="form-control" placeholder="搜索疾病、症状、药物" id="search_text" name="search_text">
+              <span class="input-group-btn">
+                  <button type="submit" class="btn btn-default" style="cursor: default;" onclick="onClick()">搜索</button>
+              </span>
+          </div><!-- /input-group -->
+        </form>
+    </div><!--搜索结束-->
+    <!--聊天开始-->
+    <div class="row" style="box-shadow: #e2e2e2 0px 0px 1px 1px;margin-bottom: 10px">
+      <!--聊天顶部信息栏开始-->
+      <div class="row border-radius" style="height: 50px;background: #212121">
+      </div><!--聊天顶部信息栏结束-->
+      <!--聊天主体开始-->
+      <div class="row" style="background:#cccccc;">
+        <!--聊天左侧开始-->
+        <div class="col-sm-12 col-md-8" style="">
+            <!--聊天消息框开始-->
+            <div class="row" style="margin: 0;overflow: auto;height:450px;border-bottom: 1px solid #bcbcbc" id="conversation">
+                <!--用户消息气泡开始-->
+                <!-- <div class="row col-xs-12" style="">
+                  <div class="user-message" >
+                    <p>您好</p>
+                  </div>
+                </div> --><!--用户消息气泡结束-->
+                <!--robot消息气泡开始-->
+                <div class="row col-xs-12">
+                  <div class="robot-message">
+                    <p>您好，我是您的医药智能助理，希望可以帮到您。 如果没答上来，可反馈。</p>
+                  </div>
+                </div><!--robot消息气泡结束-->
+            </div><!--聊天消息框结束-->
+            <!--聊天输入框开始-->
+            <div class="row" style="margin:0;">
+              <textarea name="name" id="question"></textarea>
+            </div><!--聊天输入框结束-->
+            <!--发送按钮开始-->
+            <div class="row">
+              <button class="btn-send" type="button" id="questionsub">发送</button>
+            </div><!--发送按钮结束-->
+        </div><!--聊天左侧结束-->
+        <!--聊天右侧边框开始-->
+        <div class="col-md-4 visible-md visible-lg" style="height:570px; border-left: 1px solid #bcbcbc;">
+          <div class="row text-center" style="font-size:18px; margin: 5px;border-bottom: 1px solid #c9cacb;">
+            <p>您可以这样问</p>
+          </div>
+          <div class="row" style="margin: 5px;">
+            <p>1.为什么会失眠？</p>
+            <p>2.乳腺癌的症状有哪些？</p>
+            <p>3.板蓝根颗粒可以治什么病？</p>
+            <p>4.高血压用兰沙还是板蓝根颗粒？</p>
+            <p>5.高血压挂内科吗？</p>
+            <p>6.感冒有传染性吗？</p>
+          </div>
+          <div class="row" style="margin: 5px;">
+            没有回答出来，<a href="{% url 'wenda:feedback' 'wenda'%}" >点击反馈</a>
+          </div>
+        </div><!--聊天右侧边框结束-->
+      </div><!--聊天主体开始-->
+    </div><!--聊天结束-->
+    <!--footer开始-->
+    <footer class="row text-center" style="background:#333; height:50px; color:white;padding:20px">
+      <p>2020</p>
+    </footer>
+    <!--footer结束-->
+  </div><!--container-->
+</body>
+<script type="text/javascript">
+    // 窗口中添加新信息
+    function addMessage(message, role){
+      // message字符串
+      // role包含user和robot两个
+      var Conversation = document.getElementById("conversation");
+      var newRow = document.createElement('div'),
+          newMessage = document.createElement('div'),
+          newP = document.createElement('p');
+      newRow.className = "row col-xs-12";
+      newMessage.className = role + "-message";
+      newP.innerHTML = message;
+      newMessage.appendChild(newP);
+      newRow.appendChild(newMessage);
+      Conversation.appendChild(newRow);
+    }
+    // 查询问题
+    function MeadicalQA(question) {
+          $.ajax({
+              url: '{% url 'wenda:wenda_ajax' %}',
+              type: 'GET',
+              data: {'question': question},
+              success: function (data) {
+                  var data = eval(data);
+                  console.log(data)
+                  addMessage(data.answer, "robot");
+              }
+          })
+
+    }
+    //
+    window.onload = function(){
+        var Questionsub = document.getElementById("questionsub");
+        Questionsub.onclick = function(){
+            var Question = document.getElementById("question");
+            if(Question.value == ""){
+                // 消息为空时弹窗
+                alert("消息不能为空");
+                return;
+            } //if
+            else {
+                // user
+                addMessage(Question.value, "user");
+                // robot
+                MeadicalQA(Question.value);
+                // 输入置空
+                Question.value="";
+                // 聊天窗口重定位
+                var Conversation = document.getElementById("conversation");
+                // console.log("距离顶部"+Conversation.scrollTop);
+                // console.log("共"+Conversation.scrollHeight);
+                // console.log("距离底部" + (Conversation.scrollHeight - Conversation.scrollTop));
+                // console.log("结点实际高度"Conversation.offsetHeight);
+                Conversation.scrollTop = Conversation.scrollHeight - Conversation.offsetHeight;
+                return;
+              } // else
+            } //onclick
+        }//onload
+
+
+</script>
+</html>

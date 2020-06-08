@@ -5,3 +5,5 @@
 # 自测代码
 test/
 *.txt
+# django 迁移文件
+mysite/wenda/migrations

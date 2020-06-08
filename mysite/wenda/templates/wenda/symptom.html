@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+ <head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入 Bootstrap -->
+    {% load static %}
+    <link href="{% static 'wenda/css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'wenda/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'wenda/js/bootstrap.min.js' %}"></script>
+    <style media="screen">
+
+        .row {
+           margin-right: 0px;
+           margin-left: 0px;
+        }
+        .symptom-big-box{
+           margin: 10px 0px 10px 0px;
+        }
+        .symptom-small-box{
+           background: white;
+           margin: 10px 0px 10px 0px;
+           padding: 15px;
+        }
+        .symptom-title{
+          color: #000;
+          font-size: 18px;
+          padding: 7px 0 15px 0px;
+        }
+        .symptom-txt{
+          color: #333;
+          font-size: 14px;
+          height: 100px;
+          overflow: hidden;
+        }
+        .symptom-txt-auto{
+          color: #333;
+          font-size: 14px;
+          height: auto;
+          overflow: hidden;
+        }
+        .symptom-r-disease-a{
+          margin: 18px 0 0 0;
+          padding: 10px 0 10px 0;
+          box-shadow: #ebebeb 0px 0px 5px;
+        }
+        .symptom-r-disease-name{
+          height: 20px;
+          color: #333;
+          font-size: 16px;
+          padding: 22px;
+        }
+        .symptom-r-disease-symptom{
+          height: 30px;
+          color: #666;
+          font-size: 14px;
+          padding: 22px;
+          margin: 0 0 15px 0;
+          overflow: hidden;
+        }
+        .symptom-r-symptom{
+          color: #00c8aa;
+          background: #d9fcf5;
+          margin: 0 15px 0 0;
+          padding: 7px 18px 7px 18px;
+        }
+        .symptom-more{
+          text-align: center;
+          margin:5px 0 0 0;}
+        /* 滚动条框设置 */
+        *::-webkit-scrollbar {
+          width: 7px;
+          border-radius:3px;
+        }
+
+        /* 滚动条设置 */
+        *::-webkit-scrollbar-thumb {
+          -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+          background-color: #555;
+        }
+        .container>div{
+          margin-bottom: 10px;
+        }
+        .goTop {
+            height: 40px;
+            width: 40px;
+            background: #000000;
+            border-radius: 0px;
+            position: fixed;
+            top: 90%;
+            right: 3%;
+            display: none;
+            padding: 10px;
+            text-align: center;
+        }
+        .goTop span {
+            color: #fff;
+        }
+
+    </style>
+ </head>
+ <body style="background:#f5f5f5">
+   <div class="container col-xs-12 col-sm-8 col-sm-offset-2">
+     <!--头部开始-->
+     <header class="row" style="padding-bottom: 10px;background:#f5f5f5">
+       <nav class=""style="text-align:center; padding: 10px;">
+         <div class="col-xs-4 col-xs-offset-4" style="font-size: 20px;">
+           <a href="{% url 'wenda:index' %}" style="text-decoration:none;color:#333;">医疗问答</a>
+         </div>
+         <div class="col-xs-1 col-xs-offset-3">
+           <a href="{% url 'wenda:login'%}" style="text-decoration:none;color:#333;">
+             <img src="{% static 'wenda/images/user.png' %}" style="width:28px; height:28px;">
+          </a>
+        </div>
+       </nav>
+     </header>
+     <!--头部结束-->
+      <!--症状详细信息开始-->
+      <div class="row symptom-big-box">
+        <!--症状概述-->
+        <div class="row symptom-small-box">
+            <div class="row symptom-title">
+              <span id="symptom"></span>
+              <span style="float:right;color: #666;font-size:15px;padding:5px;margin-left:15px" id='feedback'></span>
+
+            </div>
+          <div class="row symptom-txt" id="brief"></div>
+          <div class="row center-text symptom-more" id="symptom-more">
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </div>
+        </div>
+        <!--病因-->
+        <div class="row symptom-small-box">
+          <div class="row symptom-title">
+            病因
+          </div>
+          <div class="row symptom-txt" id="cause">
+          </div>
+          <div class="row center-text symptom-more" id="symptom-more">
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </div>
+        </div>
+        <!--检查-->
+        <div class="row symptom-small-box">
+          <div class="row symptom-title">
+            检查
+          </div>
+          <div class="row symptom-txt" id="check">
+          </div>
+          <div class="row center-text symptom-more" id="symptom-more">
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </div>
+        </div>
+        <!--诊断-->
+        <div class="row symptom-small-box">
+          <div class="row symptom-title">
+            诊断
+          </div>
+          <div class="row symptom-txt" id="diagnose">
+          </div>
+          <div class="row center-text symptom-more" id="symptom-more">
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </div>
+        </div>
+        <!--预防-->
+        <div class="row symptom-small-box">
+          <div class="row symptom-title">
+            预防
+          </div>
+          <div class="row symptom-txt" id="prevent">
+          </div>
+          <div class="row center-text symptom-more" id="symptom-more">
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </div>
+        </div>
+        <!--可能患有的疾病-->
+        <div class="row symptom-small-box">
+          <div class="row symptom-title">
+            可能患有的疾病
+          </div>
+          <div class="row" id="r_disease">
+            {% for disease in symptom_info.r_disease %}
+              <a class="row col-xs-12 symptom-r-disease-a" class="symptom-r-symptom" href={% url 'wenda:disease' disease.name %} style="text-decoration: none; cursor: pointer; outline: none;">
+                <div class="row symptom-r-disease-name">{{disease.name}}</div>
+                <div class="row symptom-r-disease-symptom">常见症状：{{disease.r_symptom}}</div>
+              </a>
+            {% empty %}
+              <span class="reach-right" id="r_symptom">暂无相关信息</span>
+            {% endfor %}
+          </div>
+
+        <!--常见症状-->
+        <div class="row symptom-small-box">
+          <div class="row symptom-title">
+            常见症状
+          </div>
+          <div class="row" id="r_symptom">
+              {% for symptom in symptom_info.r_symptom %}
+                <a class="symptom-r-symptom" href={% url 'wenda:symptom' symptom %} style="text-decoration: none; cursor: pointer; outline: none;">{{symptom}}</a>
+              {% empty %}
+                <span class="reach-right" id="r_symptom">暂无相关信息</span>
+              {% endfor %}
+          </div>
+        </div>
+      </div><!--症状详细信息结束-->
+      <!--footer开始-->
+      <footer class="row text-center" style="background:#333; height:50px; color:white;padding:20px">
+        <p>2020</p>
+      </footer>
+
+      <div class="goTop">
+          <span class="glyphicon glyphicon-chevron-up"></span>
+      </div>
+      <!--footer结束-->
+    </div>
+ </body>
+ <script type="text/javascript" src="{% static 'wenda/js/symptom.js' %}"></script>
+ <script type="text/javascript">
+    var symptom_info = {{ symptom_info|safe }};
+    symptomInfo(symptom_info);
+    // 反馈
+    function getCookie(cname){
+      var name = cname + "=";
+      var ca = document.cookie.split(';');
+      for(var i=0; i<ca.length; i++) {
+          var c = ca[i].trim();
+          if (c.indexOf(name)==0) { return c.substring(name.length,c.length); }
+      }
+      return "";
+    }
+    var user_role=getCookie("user_role");
+    if(user_role=='doctor'){
+      console.log(user_role);
+      $("#feedback").html('发现错误，<a href="{% url 'wenda:feedback' 'symptom'%}" >点击反馈</a>')
+    }
+ </script>
+ <!--展开更多开始-->
+ <script type="text/javascript">
+   $('.symptom-more').click(function(){  //点击展开全部
+     $(this).prev().toggleClass("symptom-txt symptom-txt-auto");
+		 $(this).children('span').toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
+ })
+ </script><!--展开更多结束-->
+ <!--返回顶部开始-->
+ <script type="text/javascript">
+     function goTop(min_height) {
+         $(".goTop").click(
+             function() {
+                 $('html,body').animate({
+                     scrollTop: 0
+                 }, 700);
+             });
+         //获取页面的最小高度，无传入值则默认为600像素
+         min_height=min_height?min_height:400;
+         //为窗口的scroll事件绑定处理函数
+         $(window).scroll(function() {
+             //获取窗口的滚动条的垂直位置
+             var s = $(window).scrollTop();
+             //当窗口的滚动条的垂直位置大于页面的最小高度时，让返回顶部元素渐现，否则渐隐
+             if (s > min_height) {
+                 $(".goTop").fadeIn(100);
+             } else {
+                 $(".goTop").fadeOut(200);
+             }
+         });
+     }
+
+     $(function() {
+         goTop();
+     });
+ </script><!--返回顶部结束-->
+</html>

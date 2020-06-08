@@ -44,6 +44,8 @@ attr_matters = []
 max_length = 0
 
 dict_dir = os.path.dirname(__file__) + '/dict/'
+key_dir = os.path.dirname(__file__) + '/key/'
+attr_dir = os.path.dirname(__file__) + '/attr/'
 # 字典路径
 dict_file_path = {'dis_sym': dict_dir + 'dis_sym.txt',
                   'ali_sym': dict_dir + 'ali_sym.txt',
@@ -54,6 +56,34 @@ dict_file_path = {'dis_sym': dict_dir + 'dis_sym.txt',
                   'check': dict_dir + 'check.txt',
                   'department': dict_dir + 'department.txt',
                   'population': dict_dir + 'population.txt'}
+# 问句关键字路径
+key_file_path = {'ts': key_dir + 'ts.txt',
+                  'tz': key_dir + 'tz.txt',
+                  'xz': key_dir + 'xz.txt',
+                  'sf': key_dir + 'sf.txt',
+                  'zf': key_dir + 'zf.txt'}
+# 属性路径
+attr_file_path = {'disease': attr_dir + 'disease.txt',
+                  'department': attr_dir + 'department.txt',
+                  'check': attr_dir + 'check.txt',
+                  'method': attr_dir + 'method.txt',
+                  'infect': attr_dir + 'infect.txt',
+                  'proportion': attr_dir + 'proportion.txt',
+                  'population': attr_dir + 'population.txt',
+                  'fee': attr_dir + 'fee.txt',
+                  'cure_period': attr_dir + 'cure_period.txt',
+                  'cure_rate': attr_dir + 'cure_rate.txt',
+                  'cause': attr_dir + 'cause.txt',
+                  'prevent': attr_dir + 'prevent.txt',
+                  'symptom': attr_dir + 'symptom.txt',
+                  'drug': attr_dir + 'drug.txt',
+                  'form': attr_dir + 'form.txt',
+                  'function': attr_dir + 'function.txt',
+                  'usage': attr_dir + 'usage.txt',
+                  'component': attr_dir + 'component.txt',
+                  'effects': attr_dir + 'effects.txt',
+                  'avoid': attr_dir + 'avoid.txt',
+                  'matters': attr_dir + 'matters.txt'}
 
 
 def init():
@@ -79,37 +109,89 @@ def init():
     with open(dict_file_path['population'], 'r', encoding='utf-8') as f:
         dict_population.extend(f.read().strip().split('\n'))
     # 问句关键词
-    key_ts.extend(['为什么'])
-    key_tz.extend(['谁', '什么', '哪', '哪儿', '哪里', '几', '多少', '多', '多么', '怎么', '怎样', '怎么样', '什么', '怎样', '什么样', '哪些', '啥',
-                   '有哪些', '怎么办'])
-    key_xz.extend(['还是'])
-    key_sf.extend(['能', '可以', '会', '有', '是', '长', '挂', '用', '做'])
-    key_zf.extend(['能不能', '可不可以', '会不会', '有没有', '是不是', '长不长'])
+    # key_ts.extend(['为什么'])
+    # key_tz.extend(['谁', '什么', '哪', '哪儿', '哪里', '几', '多少', '多', '多么', '怎么', '怎样', '怎么样', '什么', '怎样', '什么样', '哪些', '啥',
+    #                '有哪些', '怎么办'])
+    # key_xz.extend(['还是'])
+    # key_sf.extend(['能', '可以', '会', '有', '是', '长', '挂', '用', '做', '容易'])
+    # key_zf.extend(['能不能', '可不可以', '会不会', '有没有', '是不是', '长不长', '挂不挂', '用不用', '做不做', '容易不容易'])
+    with open(key_file_path['ts'], 'r', encoding='utf-8') as f:
+        key_ts.extend(f.read().strip().split('\n'))
+    with open(key_file_path['tz'], 'r', encoding='utf-8') as f:
+        key_tz.extend(f.read().strip().split('\n'))
+    with open(key_file_path['xz'], 'r', encoding='utf-8') as f:
+        key_xz.extend(f.read().strip().split('\n'))
+    with open(key_file_path['sf'], 'r', encoding='utf-8') as f:
+        key_sf.extend(f.read().strip().split('\n'))
+    with open(key_file_path['zf'], 'r', encoding='utf-8') as f:
+        key_zf.extend(f.read().strip().split('\n'))
     # 属性
-    attr_disease.extend(['病', '疾病', '并发症',
-                         '查出'])
-    attr_department.extend(['科', '科室', '部门', '门诊部门',
-                            '挂'])
-    attr_check.extend(['检查', '检查项目', '查',
-                       '查出来'])
-    attr_method.extend(['治疗', '方法', '治疗方法', '治'])
-    attr_infect.extend(['传染', '传染性', '传染率'])
-    attr_proportion.extend(['患病率', '患病比例'])
-    attr_population.extend(['人', '人群', '好发人群'])
-    attr_fee.extend(['费用', '钱', '花费'])
-    attr_cure_period.extend(['时间', '天', '年', '久', '周期', '时间', '长', '治愈时间', '治愈周期', '治好时间', '治好周期'])
-    attr_cure_rate.extend(['治愈率', '治好', '治愈', '好'])
-    attr_cause.extend(['病因', ''])
-    attr_prevent.extend(['预防', '预防方法', '', '', '', '', '', '', '', ''])
-    attr_symptom.extend(['症状', '表征', '表现', '症候', '', '', '', '', '', ''])
-    attr_drug.extend(['药', '药物', '药品', '', '', '', '', '', '', ''])
-    attr_form.extend(['剂型', '类型', '', '', '', '', '', '', '', ''])
-    attr_function.extend(['作用', '功能主治', '', '', '', '', '', '', '', ''])
-    attr_usage.extend(['用法用量', '服用', '使用', '', '', '', '', '', '', ''])
-    attr_component.extend(['成份', '', '', '', ''])
-    attr_effects.extend(['不良反应', '', '', '', '', '', '', '', '', ''])
-    attr_avoid.extend(['禁忌', '', '', '', '', '', '', '', '', ''])
-    attr_matters.extend(['注意事项', '注意', '', '', '', '', '', '', '', ''])
+    # attr_disease.extend(['病', '疾病', '并发症',
+    #                      '查出'])
+    # attr_department.extend(['科', '科室', '部门', '门诊部门',
+    #                         '挂'])
+    # attr_check.extend(['检查', '检查项目', '查',
+    #                    '查出来'])
+    # attr_method.extend(['治疗', '方法', '治疗方法', ''])
+    # attr_infect.extend(['传染', '传染性', '传染率'])
+    # attr_proportion.extend(['患病率', '患病比例', '得'])
+    # attr_population.extend(['人', '人群', '好发人群'])
+    # attr_fee.extend(['费用', '钱', '花费'])
+    # attr_cure_period.extend(['时间', '天', '年', '久', '周期', '时间', '长', '治愈时间', '治愈周期', '治好时间', '治好周期'])
+    # attr_cure_rate.extend(['治愈率', '治好', '治愈', '好'])
+    # attr_cause.extend(['病因', ''])
+    # attr_prevent.extend(['预防', '预防方法', '', '', '', '', '', '', '', ''])
+    # attr_symptom.extend(['症状', '表征', '表现', '症候', '', '', '', '', '', ''])
+    # attr_drug.extend(['药', '药物', '药品', '', '', '', '', '', '', ''])
+    # attr_form.extend(['剂型', '类型', '', '', '', '', '', '', '', ''])
+    # attr_function.extend(['作用', '功能主治', '治', '功能', '', '', '', '', '', ''])
+    # attr_usage.extend(['用法用量', '服用', '使用', '', '', '', '', '', '', ''])
+    # attr_component.extend(['成份', '', '', '', ''])
+    # attr_effects.extend(['不良反应', '', '', '', '', '', '', '', '', ''])
+    # attr_avoid.extend(['禁忌', '', '', '', '', '', '', '', '', ''])
+    # attr_matters.extend(['注意事项', '注意', '', '', '', '', '', '', '', ''])
+    with open(attr_file_path['disease'], 'r', encoding='utf-8') as f:
+        attr_disease.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['department'], 'r', encoding='utf-8') as f:
+        attr_department.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['check'], 'r', encoding='utf-8') as f:
+        attr_check.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['method'], 'r', encoding='utf-8') as f:
+        attr_method.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['infect'], 'r', encoding='utf-8') as f:
+        attr_infect.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['proportion'], 'r', encoding='utf-8') as f:
+        attr_proportion.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['population'], 'r', encoding='utf-8') as f:
+        attr_population.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['fee'], 'r', encoding='utf-8') as f:
+        attr_fee.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['cure_period'], 'r', encoding='utf-8') as f:
+        attr_cure_period.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['cure_rate'], 'r', encoding='utf-8') as f:
+        attr_cure_rate.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['cause'], 'r', encoding='utf-8') as f:
+        attr_cause.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['prevent'], 'r', encoding='utf-8') as f:
+        attr_prevent.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['symptom'], 'r', encoding='utf-8') as f:
+        attr_symptom.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['drug'], 'r', encoding='utf-8') as f:
+        attr_drug.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['form'], 'r', encoding='utf-8') as f:
+        attr_form.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['function'], 'r', encoding='utf-8') as f:
+        attr_function.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['usage'], 'r', encoding='utf-8') as f:
+        attr_usage.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['component'], 'r', encoding='utf-8') as f:
+        attr_component.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['effects'], 'r', encoding='utf-8') as f:
+        attr_effects.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['avoid'], 'r', encoding='utf-8') as f:
+        attr_avoid.extend(f.read().strip().split('\n'))
+    with open(attr_file_path['matters'], 'r', encoding='utf-8') as f:
+        attr_matters.extend(f.read().strip().split('\n'))
     # 词典中最长的词的长度
     max_length = max(max(len(word) for word in dict_dis_sym),
                      max(len(word) for word in dict_ali_sym),

@@ -45,60 +45,6 @@ class Disease:
         else:
             return None
 
-    def disease_info(self):
-        # data = {
-        #     "疾病": f"{self.name}",
-        #     "类型": "",
-        #     "别名": "",
-        #     "简介": [],
-        #     "挂什么科": "",
-        #     "需做检查": "",
-        #     "治疗方法": "",
-        #     "常用药物": [],
-        #     "一般费用": "",
-        #     "传染性": "",
-        #     "治愈周期": "",
-        #     "治愈率": "",
-        #     "患病比例": "",
-        #     "好发人群": "",
-        #     "相关症状": [],
-        #     "相关疾病": []
-        # }
-        data = dict()
-        data['疾病'] = self.name
-        data['类型'] = ' '.join(self.kind())
-        data['别名'] = ' '.join(self.alias())
-        data['简介'] = self.brief()
-        data['挂什么科'] = ' '.join(self.department())
-        data['需做检查'] = ' '.join(self.check())
-        data['治疗方法'] = ' '.join(self.method())
-        data['常用药物'] = self.drug()
-        data['一般费用'] = self.fee()
-        data['传染性'] = ' '.join(self.infect())
-        data['治愈周期'] = self.cure_period()
-        data['治愈率'] = self.cure_rate()
-        data['患病比例'] = self.proportion()
-        data['好发人群'] = ' '.join(self.population())
-        data['相关症状'] = self.symptom()
-        data['相关疾病'] = self.disease()
-        print(data)
-        return data
-
-    def disease_info_brief(self):
-        # data = {
-        #     "疾病": f"{self.name}",
-        #     "科室": "",
-        #     "简介": "",
-        #     "症状": ""
-        # }
-        data = dict()
-        data['疾病'] = self.name
-        data["科室"] = ' '.join(self.department())
-        data['简介'] = ' '.join(self.brief())
-        data['症状'] = ' '.join(self.symptom())
-        print(data)
-        return
-
     # 关系
     def alias(self):
         """
@@ -189,9 +135,13 @@ class Disease:
         :return: 以每段为一元素的简介列表
         """
         cql = f"match(n:disease) where n.name='{self.name}' return n.brief as brief"
-        data = self.graph.run(cql).data()[0]['brief'].split('\n')
-        # print(data)
-        return data
+        data = self.graph.run(cql).data()[0]['brief']
+        if data is not None:
+            data = data.split('\n')
+            # print(data)
+            return data
+        else:
+            return []
 
     def check(self):
         """
@@ -200,7 +150,8 @@ class Disease:
         """
         cql = f"match(n:disease) where n.name='{self.name}' return n.check as check"
         data = self.graph.run(cql).data()[0]['check']
-        # print(data)
+        if data is None:
+            return []
         return data
 
     def method(self):
@@ -210,7 +161,8 @@ class Disease:
         """
         cql = f"match(n:disease) where n.name='{self.name}' return n.method as method"
         data = self.graph.run(cql).data()[0]['method']
-        # print(data)
+        if data is None:
+            return ''
         return data
 
     def fee(self):
@@ -220,7 +172,8 @@ class Disease:
         """
         cql = f"match(n:disease) where n.name='{self.name}' return n.fee as fee"
         data = self.graph.run(cql).data()[0]['fee']
-        # print(data)
+        if data is None:
+            return ''
         return data
 
     def infect(self):
@@ -230,8 +183,9 @@ class Disease:
         """
         cql = f"match(n:disease) where n.name='{self.name}' return n.infect as infect"
         data = self.graph.run(cql).data()[0]['infect']
+        if data is None:
+            return []
         data = ' '.join(data)
-        # print(data)
         return data
 
     def cure_period(self):
@@ -241,7 +195,8 @@ class Disease:
         """
         cql = f"match(n:disease) where n.name='{self.name}' return n.cure_period as cure_period"
         data = self.graph.run(cql).data()[0]['cure_period']
-        # print(data)
+        if data is None:
+            return ''
         return data
 
     def cure_rate(self):
@@ -251,7 +206,9 @@ class Disease:
         """
         cql = f"match(n:disease) where n.name='{self.name}' return n.cure_rate as cure_rate"
         data = self.graph.run(cql).data()[0]['cure_rate']
-        # print(data)
+        if data is None:
+            return ''
+        data = '-'.join(data)
         return data
 
     def proportion(self):
@@ -263,7 +220,9 @@ class Disease:
         data = self.graph.run(cql).data()[0]['proportion']
         # if len(data) == 1 and data[0]['proportion'] is not None and len(data[0]['proportion']) == 2:
         #     print('2')
-        # print(data)
+        if data is None:
+            return ''
+        data = '-'.join(data)
         return data
 
     def population(self):
@@ -273,13 +232,66 @@ class Disease:
         """
         cql = f"match(n:disease) where n.name='{self.name}' return n.population as population"
         data = self.graph.run(cql).data()[0]['population']
-        # print(data)
+        if data is None:
+            return ''
+        data = '，'.join(data)
         return data
+
+    # 页面
+
+    def disease_info(self, disease_name):
+        self.name = disease_name
+        if self.node_matcher.match("disease").where(f"_.name = '{self.name}'").first() is None:
+            return None
+        data = dict()
+        data['disease'] = self.name
+        data['kind'] = ' '.join(self.kind())
+        data['alias'] = ' '.join(self.alias())
+        data['brief'] = self.brief()
+        data['department'] = ' '.join(self.department())
+        data['check'] = ' '.join(self.check())
+        data['method'] = ' '.join(self.method())
+        data['drug'] = self.drug()
+        data['fee'] = self.fee()
+        data['infect'] = ' '.join(self.infect())
+        data['cure_period'] = self.cure_period()
+        data['cure_rate'] = self.cure_rate()
+        data['proportion'] = self.proportion()
+        data['population'] = ' '.join(self.population())
+        data['r_symptom'] = self.symptom()
+        data['r_disease'] = self.disease()
+        print(data)
+        return data
+
+    def disease_info_brief(self, disease_name):
+        # data = {
+        #     "疾病": f"{self.name}",
+        #     "科室": "",
+        #     "简介": "",
+        #     "症状": ""
+        # }
+        self.name = disease_name
+        data = dict()
+        data['疾病'] = self.name
+        data["科室"] = ' '.join(self.department())
+        data['简介'] = ' '.join(self.brief())
+        data['症状'] = '、'.join(self.symptom())
+        return data
+
+    def fuzzy_search(self, search_text):
+        if search_text == '':
+            cql = f"match(p:kind)-[]->(n:disease) where p.name='常见病' return n.name as name"
+        else:
+            cql = f"match(n:disease) where n.name=~'.*{search_text}.*' return n.name as name"
+        diseases = []
+        for disease in self.graph.run(cql).data():
+            diseases.append(disease['name'])
+        return diseases
 
 
 if __name__ == '__main__':
     handler = Disease()
-    handler.search("", "癌症")
+    # handler.search("", "癌症")
     # # 关系
     # handler.alias()
     # handler.kind()
@@ -298,5 +310,6 @@ if __name__ == '__main__':
     # handler.proportion()
     # handler.population()
 
-    handler.disease_info()
-    handler.disease_info_brief()
+    handler.disease_info('感冒')
+    handler.disease_info_brief('感冒')
+    handler.fuzzy_search('感冒')

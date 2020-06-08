@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+ <head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入 Bootstrap -->
+    {% load static %}
+    <link href="{% static 'wenda/css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'wenda/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'wenda/js/bootstrap.min.js' %}"></script>
+    <style media="screen">
+      .row {
+         margin-right: 0px;
+         margin-left: 0px;
+      }
+      .my-big-box{
+         margin: 10px 0px 10px 0px;
+      }
+      .my-bar-box{
+         background: white;
+         margin: 5px 0px 5px 0px;
+         padding: 7px 15px 0px 15px;
+         font-size:15px;
+      }
+      .my-small-box{
+         background: white;
+         margin: 5px 0px 5px 0px;
+         padding: 15px;
+      }
+      .disease{
+        color: #000;
+        margin:5px;
+        font-size:30px;
+      }
+      .kind{
+        color: #666;
+        font-size:18px;
+        padding:5px;
+        margin-left:15px
+      }
+      .alias{
+        font-size:20px;
+        color: #999;
+        margin-top:15px;
+      }
+      .brief{
+        font-size:20px;
+        color: #333;
+        height:100px;
+        margin:5px;
+        overflow:hidden;
+      }
+      .reach-left{
+        color: #333;
+        font-size: 20px;
+        width:100px;
+        margin:5px;
+        padding:0;
+        float:left;
+        display:block;
+      }
+      .reach-right{
+        color: #666;
+        font-size: 20px;
+        width:400px;
+        margin:5px 0 10px 0;
+        padding:0;
+        float:left;
+        display:inline-block;
+      }
+      .reach-right a{
+        text-decoration:none;
+        outline: none;
+        display: inline-block;
+        background: #f6f6f6;
+        color: #333;
+        font-size: 20px;
+        padding: 7px;
+        margin: 0 10px 10px 0;
+        border-radius:3px;
+        box-shadow: #eee 0px 0px 1px 1px;
+        height: 40px;
+      }
+      .brief-open {
+          font-size: 20px;
+          background:#f5f5f5;
+          color:#999;
+          text-align: center;
+          padding:5px 0px 5px 0px;
+      }
+      /* 滚动条框设置 */
+      *::-webkit-scrollbar {
+        width: 7px;
+        border-radius:3px;
+      }
+
+      /* 滚动条设置 */
+      *::-webkit-scrollbar-thumb {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+        background-color: #555;
+      }
+      .container>div{
+        margin-bottom: 10px;
+      }
+      .goTop {
+          height: 40px;
+          width: 40px;
+          background: #000000;
+          border-radius: 0px;
+          position: fixed;
+          top: 90%;
+          right: 3%;
+          display: none;
+          padding: 10px;
+          text-align: center;
+      }
+      .goTop span {
+          color: #fff;
+      }
+    </style>
+ </head>
+ <body style="background:#f5f5f5">
+   <div class="container col-xs-12 col-sm-8 col-sm-offset-2">
+     <!--头部开始-->
+     <header class="row" style="padding-bottom: 10px;background:#f5f5f5">
+       <nav class=""style="text-align:center; padding: 10px;">
+         <div class="col-xs-4 col-xs-offset-4" style="font-size: 20px;">
+           <a href="{% url 'wenda:index' %}" style="text-decoration:none;color:#333;">医疗问答</a>
+         </div>
+         <div class="col-xs-1 col-xs-offset-3">
+           <a href="{% url 'wenda:login'%}" style="text-decoration:none;color:#333;">
+             <img src="{% static 'wenda/images/user.png' %}" style="width:28px; height:28px;">
+          </a>
+        </div>
+       </nav>
+     </header>
+     <!--头部结束-->
+
+      <!--疾病详细信息开始-->
+      <div class="row my-big-box">
+        <!--疾病别名简介-->
+        <div class="row my-small-box">
+          <div class="row">
+            <span class="disease" id="disease"></span>
+            <span class="kind" id="kind"></span>
+            <span style="float:right;color: #666;font-size:15px;padding:5px;margin-left:15px" id='feedback'></span>
+          </div><!--疾病-->
+          <div class="row alias">
+            <span>别名：</span><span class="" id="alias"></span>
+          </div><!--别名-->
+          <div class="row brief" id="brief">
+          </div><!--简介-->
+          <div class="row brief-open">展开全部</div>
+        </div><!--疾病别名简介-->
+        <!--挂什么科-->
+        <div class="row my-small-box">
+          <span class="reach-left">挂什么科：</span>
+          <span class="reach-right" id="department">内科 内分泌科啊</span>
+        </div><!--挂什么科-->
+        <!--需作检查-->
+        <div class="row my-small-box">
+          <span class="reach-left">需做检查：</span>
+          <span class="reach-right" id="check"></span>
+        </div><!--需作检查-->
+        <!--治疗方法-->
+        <div class="row my-small-box">
+          <span class="reach-left">治疗方法：</span>
+          <span class="reach-right" id="method"></span>
+        </div><!--治疗方法-->
+        <!--常用药物-->
+        <div class="row my-small-box">
+          <span class="reach-left">常用药物：</span>
+            <span class="reach-right" id="drug">
+              {% for drug in disease_info.drug %}
+                <a href={% url 'wenda:drug' drug %}>{{drug}}</a>
+              {% empty %}
+                <span class="reach-right" id="drug">暂无相关信息</span>
+              {% endfor %}
+            </span>
+        </div><!--常用药物-->
+        <!--一般费用-->
+        <div class="row my-small-box">
+          <span class="reach-left">一般费用：</span>
+          <span class="reach-right" id="fee"></span>
+        </div><!--一般费用-->
+        <!--传染性-->
+        <div class="row my-small-box">
+          <span class="reach-left">传染性：</span>
+          <span class="reach-right" id="infect"></span>
+        </div><!--传染性-->
+        <!--治愈周期-->
+        <div class="row my-small-box">
+          <span class="reach-left">治愈周期：</span>
+          <span class="reach-right" id="cure_period"></span>
+        </div><!--治愈周期-->
+        <!--治愈率-->
+        <div class="row my-small-box">
+          <span class="reach-left">治愈率：</span>
+          <span class="reach-right" id="cure_rate"></span>
+        </div><!--治愈率-->
+        <!--患病比例-->
+        <div class="row my-small-box">
+          <span class="reach-left">患病比例：</span>
+          <span class="reach-right" id="proportion">0.05%</span>
+        </div><!--患病比例-->
+        <!--好发人群-->
+        <div class="row my-small-box">
+          <span class="reach-left">好发人群：</span>
+          <span class="reach-right" id="population">多发生于产后期妇女啊</span>
+        </div><!--好发人群-->
+        <!--相关症状-->
+        <div class="row my-small-box">
+          <span class="reach-left">相关症状：</span>
+            <span class="reach-right" id="r_symptom">
+              {% for symptom in disease_info.r_symptom %}
+                <a href={% url 'wenda:symptom' symptom %}>{{symptom}}</a>
+              {% empty %}
+                <span class="reach-right" id="r_symptom">暂无相关信息</span>
+              {% endfor %}
+            </span>
+        </div><!--相关症状-->
+        <!--相关疾病-->
+        <div class="row my-small-box">
+          <span class="reach-left">相关疾病：</span>
+            <span class="reach-right" id="r_disease">
+              {% for disease in disease_info.r_disease %}
+                <a href={% url 'wenda:disease' disease %}>{{disease}}</a>
+              {% empty %}
+                <span class="reach-right" id="r_disease">暂无相关信息</span>
+              {% endfor %}
+            </span>
+        </div><!--相关疾病-->
+        <!--disease.js-->
+      </div><!--疾病详细信息结束-->
+      <!--disease.js-->
+      <div class="goTop">
+          <span class="glyphicon glyphicon-chevron-up"></span>
+      </div>
+      <!--footer开始-->
+      <footer class="row text-center" style="background:#333; height:50px; color:white;padding:20px">
+        <p>2020</p>
+      </footer><!--footer结束-->
+    </div>
+ </body>
+<!--展开更多开始-->
+<script type="text/javascript">
+  $('.brief-open').click(function(){  //点击展开全部
+		var dhei = $(this).prev().height();
+		$(this).prev().css("height","auto").attr("data-hei",dhei);
+		$(this).hide();
+})
+</script><!--展开更多结束-->
+<script type="text/javascript" src="{% static 'wenda/js/disease.js' %}"></script>
+<script type="text/javascript">
+  var disease_info = {{ disease_info|safe }};
+  diseaseInfo(disease_info);
+  // 反馈
+  function getCookie(cname){
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i].trim();
+        if (c.indexOf(name)==0) { return c.substring(name.length,c.length); }
+    }
+    return "";
+  }
+  var user_role=getCookie("user_role");
+  if(user_role=='doctor'){
+    $("#feedback").html('发现错误，<a href="{% url 'wenda:feedback' 'disease'%}" >点击反馈</a>')
+  }
+</script>
+ <!--返回顶部开始-->
+ <script type="text/javascript">
+     function goTop(min_height) {
+         $(".goTop").click(
+             function() {
+                 $('html,body').animate({
+                     scrollTop: 0
+                 }, 700);
+             });
+         //获取页面的最小高度，无传入值则默认为600像素
+         min_height=min_height?min_height:400;
+         //为窗口的scroll事件绑定处理函数
+         $(window).scroll(function() {
+             //获取窗口的滚动条的垂直位置
+             var s = $(window).scrollTop();
+             //当窗口的滚动条的垂直位置大于页面的最小高度时，让返回顶部元素渐现，否则渐隐
+             if (s > min_height) {
+                 $(".goTop").fadeIn(100);
+             } else {
+                 $(".goTop").fadeOut(200);
+             }
+         });
+     }
+
+     $(function() {
+         goTop();
+     });
+ </script><!--返回顶部结束-->
+</html>

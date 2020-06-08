@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+ <head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入 Bootstrap -->
+    {% load static %}
+    <link href="{% static 'wenda/css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'wenda/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'wenda/js/bootstrap.min.js' %}"></script>
+    <style media="screen">
+      .row {
+         margin-right: 0px;
+         margin-left: 0px;
+      }
+      .drug-big-box{
+         margin: 10px 0px 0px 0px;
+         padding: 0 15px 0 15px;
+         height:600px;
+         background: white;
+         overflow:hidden;
+      }
+      .drug-big-box-auto{
+         margin: 10px 0px 0px 0px;
+         padding: 0 15px 0 15px;
+         height:auto;
+         background: white;
+      }
+      .drug-small-box{
+         margin: 0px;
+         border-bottom:2px solid #f5f5f5;
+         padding: 15px 0px 15px 0px;
+      }
+      .drug-title{
+        color: #999;
+        font-size: 14px;
+      }
+      .drug-txt{
+        color: #333;
+        font-size: 14px;
+        margin:10px 10px 0px 10px;
+        height: auto;
+        overflow: hidden;
+      }
+      .drug-more{
+        background:white;
+        text-align: center;
+        padding: 0 15px 0 15px;
+        margin:0 0 30px 0;
+        color:#333;
+        font-size:14px;
+      }
+      /* 滚动条框设置 */
+      *::-webkit-scrollbar {
+        width: 7px;
+        border-radius:3px;
+      }
+
+      /* 滚动条设置 */
+      *::-webkit-scrollbar-thumb {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+        background-color: #555;
+      }
+      .goTop {
+          height: 40px;
+          width: 40px;
+          background: #000000;
+          border-radius: 0px;
+          position: fixed;
+          top: 90%;
+          right: 3%;
+          display: none;
+          padding: 10px;
+          text-align: center;
+      }
+      .goTop span {
+          color: #fff;
+      }
+    </style>
+ </head>
+ <body style="background:#f5f5f5">
+   <div class="container col-xs-12 col-sm-8 col-sm-offset-2">
+     <!--头部开始-->
+     <header class="row" style="padding-bottom: 10px;background:#f5f5f5">
+       <nav class=""style="text-align:center; padding: 10px;">
+         <div class="col-xs-4 col-xs-offset-4" style="font-size: 20px;">
+           <a href="{% url 'wenda:index' %}" style="text-decoration:none;color:#333;">医疗问答</a>
+         </div>
+         <div class="col-xs-1 col-xs-offset-3">
+           <a href="{% url 'wenda:login'%}" style="text-decoration:none;color:#333;">
+             <img src="{% static 'wenda/images/user.png' %}" style="width:28px; height:28px;">
+          </a>
+        </div>
+       </nav>
+     </header>
+     <!--头部结束-->
+      <!--药物详细信息开始-->
+      <div class="row drug-big-box">
+        <!--通用名称-->
+        <div class="row drug-small-box">
+          <div class="row drug-title">通用名称
+            <span style="float:right;color: #666;" id='feedback'></span>
+          </div>
+          <div class="row drug-txt" id="drug"></div>
+        </div><!--通用名称-->
+        <!--功能主治-->
+        <div class="row drug-small-box">
+          <div class="row drug-title">功能主治</div>
+          <div class="row drug-txt" id="func"></div>
+        </div><!--功能主治-->
+        <!--用法用量-->
+        <div class="row drug-small-box">
+          <div class="row drug-title">用法用量</div>
+          <div class="row drug-txt" id="usage"></div>
+        </div><!--用法用量-->
+        <!--剂型-->
+        <div class="row drug-small-box">
+          <div class="row drug-title">剂型</div>
+          <div class="row drug-txt" id="form"></div>
+        </div><!--剂型-->
+        <!--成份-->
+        <div class="row drug-small-box">
+          <div class="row drug-title">成份</div>
+          <div class="row drug-txt" id="component"></div>
+        </div><!--成份-->
+        <!--不良反应-->
+        <div class="row drug-small-box">
+          <div class="row drug-title">不良反应</div>
+          <div class="row drug-txt" id="effects"></div>
+        </div><!--不良反应-->
+        <!--禁忌-->
+        <div class="row drug-small-box">
+          <div class="row drug-title">禁忌</div>
+          <div class="row drug-txt" id="avoid"></div>
+        </div><!--禁忌-->
+        <!--注意事项-->
+        <div class="row drug-small-box">
+          <div class="row drug-title">注意事项</div>
+          <div class="row drug-txt" id="matters"></div>
+        </div><!--注意事项-->
+      </div><!--药物详细信息结束-->
+      <div class="row center-text drug-more">
+        <div style="border-top:2px solid #f5f5f5;padding:15px 0 15px 0">
+          <span>点击加载更多</span>
+        </div>
+
+      </div>
+      <div class="goTop">
+          <span class="glyphicon glyphicon-chevron-up"></span>
+      </div>
+      <!--footer开始-->
+      <footer class="row text-center" style="background:#333; height:50px; color:white;padding:20px">
+        <p>2020</p>
+      </footer>
+      <!--footer结束-->
+    </div>
+ </body>
+ <script type="text/javascript" src="{% static 'wenda/js/drug.js' %}"></script>
+ <script type="text/javascript">
+   // drugInfo(drug_info);
+    var drug_info = {{ drug_info|safe }};
+    // console.log(drug_info);
+    drugInfo(drug_info);
+    // 反馈
+    function getCookie(cname){
+      var name = cname + "=";
+      var ca = document.cookie.split(';');
+      for(var i=0; i<ca.length; i++) {
+          var c = ca[i].trim();
+          if (c.indexOf(name)==0) { return c.substring(name.length,c.length); }
+      }
+      return "";
+    }
+    var user_role=getCookie("user_role");
+    if(user_role=='doctor'){
+      $("#feedback").html('发现错误，<a href="{% url 'wenda:feedback' 'drug'%}">点击反馈</a>')
+    }
+ </script>
+ <!--展开更多开始-->
+ <script type="text/javascript">
+   var height = true;
+   $('.drug-more').click(function(){  //点击展开全部
+     if(height){
+       $(this).children('div').children('span').text("收起");
+       $(this).children('div').css("border-top","none");
+       height = false;
+     }
+     else {
+       $(this).children('div').children('span').text("点击加载更多");
+       $(this).children('div').css("border-top","2px solid #f5f5f5");
+       height = true;
+     }
+     $(this).prev().toggleClass("drug-big-box drug-big-box-auto");
+ })
+ </script><!--展开更多结束-->
+
+ <!--返回顶部开始-->
+ <script type="text/javascript">
+     function goTop(min_height) {
+         $(".goTop").click(
+             function() {
+                 $('html,body').animate({
+                     scrollTop: 0
+                 }, 700);
+             });
+         //获取页面的最小高度，无传入值则默认为600像素
+         min_height=min_height?min_height:400;
+         //为窗口的scroll事件绑定处理函数
+         $(window).scroll(function() {
+             //获取窗口的滚动条的垂直位置
+             var s = $(window).scrollTop();
+             //当窗口的滚动条的垂直位置大于页面的最小高度时，让返回顶部元素渐现，否则渐隐
+             if (s > min_height) {
+                 $(".goTop").fadeIn(100);
+             } else {
+                 $(".goTop").fadeOut(200);
+             }
+         });
+     }
+
+     $(function() {
+         goTop();
+     });
+ </script><!--返回顶部结束-->
+</html>
